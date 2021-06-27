@@ -17,8 +17,13 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],                                      # Information to filter the project on PyPi website
-    python_requires='>=3.6',                # Minimum version requirement of the package
-    py_modules=["treasureisland"],             # Name of the python package
-    package_dir={'':'treasureisland'},     # Directory of the source code of the package
-    install_requires=[]                     # Install other dependencies if any
+    python_requires='>=3.7',                # Minimum version requirement of the package
+    py_modules=["treasureisland"],           # Name of the python package    
+    include_package_data=True,
+    install_requires=[
+        'gensim>=4.0.1',
+        'biopython>=1.79',        
+        'scikit-learn>=0.24.2',
+        'pandas'                         
+   ]                     
 )

@@ -1,9 +1,14 @@
-from .identifyGI import identifyGI
+from treasureisland.identifyGI import identifyGI
 import pickle 
 import pandas as pd
 from Bio import SeqIO
 from gensim.test.utils import get_tmpfile
 from gensim.models.doc2vec import Doc2Vec
+import os
+import pkgutil
+from . import models
+from importlib import resources
+
 
 class gi_driver:
 
@@ -35,11 +40,13 @@ class gi_driver:
     lower_threshold = 0.50
     tune_metric = 1000
     minimum_gi_size = 10000
-
-    fname = get_tmpfile("C:/Users/USER/GenomicIslandPrediction/treasureisland/models/doc2vec_dbow_50")   
-    dna_emb_model = Doc2Vec.load(fname)
-    with open('C:/Users/USER/GenomicIslandPrediction/treasureisland/models/' + 'svm_classifier' , 'rb') as handle:
-          classifier = pickle.load(handle)
+    
+    read_classifier = resources.read_binary(models, "svm_upgrade_gensim_sklearn")
+    classifier = pickle.loads(read_classifier)
+    
+    read_emb_model = resources.read_binary(models, "doc2vec_upgrade_gensim")
+    dna_emb_model = pickle.loads(read_emb_model)
+    
     dna_sequence = self.format_input()
 
     genome = identifyGI(dna_sequence, window_size,kmer_size, dna_emb_model, classifier,upper_threshold,lower_threshold,tune_metric,minimum_gi_size)
@@ -58,10 +65,6 @@ class gi_driver:
     return pd.DataFrame(predictions).to_csv('output.csv')
 
   def predictions_to_text(self,predictions):
-    return pd.DataFrame(predictions).to_csv('output.txt', header=None, index=None, sep=' ', mode='a')
-
-
-
-    
+    return pd.DataFrame(predictions).to_csv('output.txt', header=None, index=None, sep=' ', mode='a') 
 
 
