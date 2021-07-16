@@ -1,7 +1,7 @@
-from treasureisland.gi_driver import gi_driver 
+from treasureisland.gi_driver import gi_driver
 
 
-driver = gi_driver("C:/Users/USER/GenomicIslandPrediction/treasureisland/genome/test.fasta")
+driver = gi_driver("C:/Users/USER/GenomicIslandPrediction/genome/test.fasta")
 
 pred = driver.get_predictions()
 

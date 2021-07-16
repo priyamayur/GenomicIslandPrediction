@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="treasureisland",                     # This is the name of the package
-    version="0.0.1",                        # The initial release version
+    version="0.2b1",                        # The initial release version
     author="Priyanka Banerjee",
     author_email="banerjee.p1104@gmail.com",                     # Full name of the author
     description="Prediction of Genomic Islands",
