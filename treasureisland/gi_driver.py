@@ -25,7 +25,7 @@ class gi_driver:
         gi_list = []
         for gi in output.keys():
             gi_result = output[gi]
-            start = gi_result[0] +1 
+            start = gi_result[0] + 1 
             end = gi_result[1]
             pred = gi_result[2]
             gi_list.append([start, end, pred])
@@ -54,7 +54,7 @@ class gi_driver:
     
     output_dataframe = self.process_output(fine_tuned_pred)    
 
-    print(fine_tuned_pred)
+    #print(fine_tuned_pred)
 
     return output_dataframe
 

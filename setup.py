@@ -9,6 +9,7 @@ setuptools.setup(
     author="Priyanka Banerjee",
     author_email="banerjee.p1104@gmail.com",                     # Full name of the author
     description="Prediction of Genomic Islands",
+    url = 'https://github.com/priyamayur/GenomicIslandPrediction',
     long_description=long_description,      # Long description read from the the readme file
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),    # List of all python modules to be installed
@@ -24,6 +25,6 @@ setuptools.setup(
         'gensim>=4.0.1',
         'biopython>=1.79',        
         'scikit-learn>=0.24.2',
-        'pandas'                         
+        'pandas'                        
    ]                     
 )

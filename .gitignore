@@ -1,0 +1,8 @@
+.vscode
+env
+treasureisland.egg-info
+treasureisland\__pycache__
+dist/treasureisland-0.2b1-py3-none-any.whl
+dist/treasureisland-0.2b1.tar.gz
+
+

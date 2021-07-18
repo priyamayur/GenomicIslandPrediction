@@ -208,7 +208,7 @@ class identifyGI:
             frag_prob = self.find_fragment_probability(frag_border)
             if (travelling_inward):
                 previous_prob = tune_probs[-1][2]       
-                if (frag_prob < 0.5):                    
+                if (frag_prob < self.lower_threshold):                    
                     if (border_left):
                         new_borders = [old_borders[0],tune_probs[-1][0]]
                     else: 
@@ -217,7 +217,7 @@ class identifyGI:
                 if (previous_prob > frag_prob):
                     break        
             else:
-                if (frag_prob < 0.7):
+                if (frag_prob < self.upper_threshold):
                     break    
             tune_probs.append([left_border,right_border,frag_prob]) 
             new_borders = [left_border,right_border] 
@@ -277,14 +277,13 @@ class identifyGI:
         if (right_ib != right_border):
             final_right = right_ib
         if (right_ob != right_border):
-            final_right =  right_ob            
+            final_right =  right_ob          
 
         
-        frag_prob_final = self.find_fragment_probability([final_left,final_right])
-        
-        #new_border_prob.append([final_left,final_right,frag_prob_final])
+        frag_prob_final = self.find_fragment_probability([final_left,final_right])        
+       
         new_border_prob = (final_left,final_right,frag_prob_final)
-
+        
         return new_border_prob
 
     def find_GI_borders(self,gi_regions):
