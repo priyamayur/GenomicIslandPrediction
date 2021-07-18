@@ -2,7 +2,7 @@
 
 TreasureIsland is a machine learning-based Genomic Island prediction software, that uses an unsupervised representation of DNA for its prediction.
 
-Installation :
+## Installation :
 
 Use pip to install the package :
 
