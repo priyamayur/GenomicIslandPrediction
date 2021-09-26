@@ -22,15 +22,18 @@ class gi_driver:
     return sequences
 
   def process_output(self, output):
-        gi_list = []
-        for gi in output.keys():
-            gi_result = output[gi]
-            start = gi_result[0] + 1 
-            end = gi_result[1]
-            pred = gi_result[2]
-            gi_list.append([start, end, pred])
-        pred_df = pd.DataFrame(gi_list, columns=['start', 'end', 'probability'])
-        return pred_df  
+    gi_list = []
+    for seq in output:
+      for gi in seq.keys():
+        gi_result = seq[gi]
+        id = gi_result[0]
+        start = gi_result[1] + 1 
+        end = gi_result[2]
+        pred = gi_result[3]
+        gi_list.append([id,start, end, pred])
+        
+    pred_df = pd.DataFrame(gi_list, columns=['id','start', 'end', 'probability'])
+    return pred_df  
 
   def get_predictions(self):
     #Parameters 

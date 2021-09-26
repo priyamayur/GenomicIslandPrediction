@@ -7,7 +7,7 @@ class identifyGI:
     def __init__(self,dna_sequence_list, window_size,kmer_size, dna_emb_model, classifier,upper_threshold,lower_threshold,tune_metric,minimum_gi_size):
         '''Initialize variables'''
 
-        self.dna_sequence = dna_sequence_list[0]
+        self.dna_sequence_list = dna_sequence_list
         self.window_size = window_size
         self.kmer_size = kmer_size
         self.dna_emb_model = dna_emb_model
@@ -32,12 +32,12 @@ class identifyGI:
 
         return kmers       
 
-    def split_dna_sequence(self):
+    def split_dna_sequence(self, dna_sequence):
         '''
         Divides the DNA segment into equal small segments of sizes self.window_size 
         '''
         
-        sequence = str(self.dna_sequence.seq).lower()
+        sequence = str(dna_sequence.seq).lower()
         processed_dna_seq = []
         segment_borders = []
 
@@ -114,7 +114,7 @@ class identifyGI:
           
         return gi_dict  
 
-    def find_fragment_probability(self, GI_borders):
+    def find_fragment_probability(self, GI_borders, dna_sequence):
         '''
         Get a DNA fragment probability for class GI
         GI_borders : set of start and end points
@@ -122,7 +122,7 @@ class identifyGI:
         gi_start = int(GI_borders[0])
         gi_end = int(GI_borders[1])  
         
-        sequence = str(self.dna_sequence.seq).lower()        
+        sequence = str(dna_sequence.seq).lower()        
         fragment = sequence[gi_start:gi_end]
         kmers = self.generate_kmers(fragment) 
         
@@ -133,7 +133,7 @@ class identifyGI:
 
         return gi_prob
 
-    def pre_fine_tune(self, gi_regions, gi):
+    def pre_fine_tune(self, gi_regions, gi, dna_sequence):
         '''
            Determines the start and end points and upper and lower limits for each GI fragment, 
            before the fine tuning step begins.
@@ -173,14 +173,14 @@ class identifyGI:
                 merged_GI_prob = gi_regions[gi][0][3]  
                 first_frag_gi = 0 
         else:
-            merged_GI_prob = self.find_fragment_probability(merged_GI_borders)     
+            merged_GI_prob = self.find_fragment_probability(merged_GI_borders, dna_sequence)     
 
         tune_limit = [lower_limit,upper_limit]  # upper and lower limits for tuning borders for each GI
 
         return merged_GI_borders, tune_limit, merged_GI_prob
             
 
-    def get_tuned_borders(self,left_border,right_border,tune_limit,left_tune_metric,right_tune_metric,tune_probs):
+    def get_tuned_borders(self,left_border,right_border,tune_limit,left_tune_metric,right_tune_metric,tune_probs, dna_sequence):
         '''
         Fine tuning method to fine tune each GI fragment to return the list of possible new borders and their probability
         left_border : current GI left border
@@ -205,7 +205,7 @@ class identifyGI:
             if ((right_border - left_border + 1 ) < self.minimum_gi_size or left_border < (left_limit) or right_border > right_limit):      
                 break
             frag_border = [left_border,right_border]
-            frag_prob = self.find_fragment_probability(frag_border)
+            frag_prob = self.find_fragment_probability(frag_border, dna_sequence)
             if (travelling_inward):
                 previous_prob = tune_probs[-1][2]       
                 if (frag_prob < self.lower_threshold):                    
@@ -224,7 +224,7 @@ class identifyGI:
 
         return tune_probs, new_borders         
 
-    def fine_tune_borders(self, merged_GI_borders,tune_limit,merged_GI_prob):
+    def fine_tune_borders(self, merged_GI_borders,tune_limit,merged_GI_prob, dna_sequence):
         '''
         Gets the fine-tuned GI borders and determines the best border for each GI
         merged_GI_borders : GI border after merging
@@ -247,22 +247,22 @@ class identifyGI:
 
         #Find left outer boundary
         
-        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,-self.tune_metric,0,tune_probs) 
+        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,-self.tune_metric,0,tune_probs, dna_sequence) 
         left_ob = new_limits[0]
         
         #Find left inner boundary
         
-        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,self.tune_metric,0,tune_probs)
+        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,self.tune_metric,0,tune_probs, dna_sequence)
         left_ib = new_limits[0]         
         
         #Find right outer boundary
         
-        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,0,self.tune_metric,tune_probs)
+        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,0,self.tune_metric,tune_probs, dna_sequence)
         right_ob =  new_limits[1]
         
         #Find right inner boundary
         
-        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,0,-self.tune_metric,tune_probs)
+        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,0,-self.tune_metric,tune_probs, dna_sequence)
         right_ib = new_limits[1]
         
         #If left and/or right borders have moved in, then consider inner border, 
@@ -280,13 +280,13 @@ class identifyGI:
             final_right =  right_ob          
 
         
-        frag_prob_final = self.find_fragment_probability([final_left,final_right])        
+        frag_prob_final = self.find_fragment_probability([final_left,final_right], dna_sequence)        
        
         new_border_prob = (final_left,final_right,frag_prob_final)
         
         return new_border_prob
 
-    def find_GI_borders(self,gi_regions):
+    def find_GI_borders(self,gi_regions,id, dna_sequence):
         ''' 
         Function to combine all the GI border finding steps
         gi_regions : GI fragments along with its flanking sequence
@@ -296,9 +296,9 @@ class identifyGI:
           
         for gi in gi_regions.keys():
 
-            merged_GI_borders, tune_limit, merged_GI_prob = self.pre_fine_tune(gi_regions, gi)
-            new_border_prob = self.fine_tune_borders(merged_GI_borders,tune_limit,merged_GI_prob)
-            gi_borders[gi] = [new_border_prob[0], new_border_prob[1], new_border_prob[2]]
+            merged_GI_borders, tune_limit, merged_GI_prob = self.pre_fine_tune(gi_regions, gi, dna_sequence)
+            new_border_prob = self.fine_tune_borders(merged_GI_borders,tune_limit,merged_GI_prob, dna_sequence)
+            gi_borders[gi] = [id, new_border_prob[0], new_border_prob[1], new_border_prob[2]]
 
         return gi_borders    
 
@@ -307,10 +307,14 @@ class identifyGI:
         ''' 
         Main function to call all other functions for identifying GI regions
         '''   
-        processed_dna_seq,segment_borders = self.split_dna_sequence()
-        dna_vectors = self.get_dna_vectors(processed_dna_seq)
-        dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders)
-        gi_regions = self.get_GI_regions(dna_prob) 
-        gi_borders = self.find_GI_borders(gi_regions)    
-        
-        return gi_borders 
+        all_gi_borders =[]
+        for dna_sequence in self.dna_sequence_list:
+            id = dna_sequence.id
+            processed_dna_seq,segment_borders = self.split_dna_sequence(dna_sequence)
+            dna_vectors = self.get_dna_vectors(processed_dna_seq)
+            dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders)
+            gi_regions = self.get_GI_regions(dna_prob) 
+            gi_borders = self.find_GI_borders(gi_regions, id, dna_sequence)
+            all_gi_borders.append(gi_borders)
+            
+        return all_gi_borders 

@@ -1,7 +1,7 @@
 from treasureisland.gi_driver import gi_driver
 
 
-driver = gi_driver("C:/Users/USER/GenomicIslandPrediction/genome/bsub.fasta") # enter local path for sequence file
+driver = gi_driver("C:/Users/USER/GenomicIslandPrediction/genome/test.fasta") # enter local path for sequence file
 
 pred = driver.get_predictions()
 
