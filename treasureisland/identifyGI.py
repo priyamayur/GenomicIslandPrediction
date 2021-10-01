@@ -1,32 +1,27 @@
 import pandas as pd
 import numpy as np
 from Bio.Seq import Seq
+from . import parameters
+
 
 class identifyGI:
 
-    def __init__(self,dna_sequence_list, window_size,kmer_size, dna_emb_model, classifier,upper_threshold,lower_threshold,tune_metric,minimum_gi_size):
+    def __init__(self, dna_sequence_list, dna_emb_model, classifier):
         '''Initialize variables'''
 
         self.dna_sequence_list = dna_sequence_list
-        self.window_size = window_size
-        self.kmer_size = kmer_size
         self.dna_emb_model = dna_emb_model
         self.classifier = classifier
-        self.upper_threshold = upper_threshold
-        self.lower_threshold = lower_threshold
-        self.tune_metric = tune_metric
-        self.minimum_gi_size = minimum_gi_size
-        
 
     def generate_kmers(self,segment):
         '''Generate overlapping kmers from a given DNA sequence
            segment : DNA sequence
         '''
         kmers = []
-        for i in range(0, len(segment) - (self.kmer_size-1)):
+        for i in range(0, len(segment) - (parameters.KMER_SIZE-1)):
 
             start = i
-            end = i + self.kmer_size
+            end = i + parameters.KMER_SIZE
             kmer = segment[start:end]
             kmers.append(kmer)
 
@@ -41,10 +36,10 @@ class identifyGI:
         processed_dna_seq = []
         segment_borders = []
 
-        for i in range(0, len(sequence),self.window_size ):
+        for i in range(0, len(sequence), parameters.WINDOW_SIZE ):
 
             start = i
-            end = i + self.window_size
+            end = i + parameters.WINDOW_SIZE
             segment = sequence[start:end]
             kmers = self.generate_kmers(segment)
             processed_dna_seq.append(kmers)
@@ -60,7 +55,7 @@ class identifyGI:
         dna_vectors = []
         for segments in processed_dna_seq:
 
-            inferred_vector = self.dna_emb_model.infer_vector(segments,epochs=20)
+            inferred_vector = self.dna_emb_model.infer_vector(segments, epochs=20)
             dna_vectors.append(inferred_vector)
             
         return dna_vectors    
@@ -91,7 +86,7 @@ class identifyGI:
         prev_gi = False
         for row in dna_prob:
             found_gi = False
-            if (row[3] >= self.upper_threshold):
+            if (row[3] >= parameters.UPPER_THRESHOLD):
                 found_gi = True
                 if 'gi_'+ str(gi_num) in gi_dict.keys():
                     gi_dict['gi_'+ str(gi_num)].append(row)
@@ -99,14 +94,14 @@ class identifyGI:
                     if (prev == -1) :      
                         gi_dict['gi_'+ str(gi_num)] = [row]
                     else:   
-                        if prev[3] > self.lower_threshold :        
+                        if prev[3] > parameters.LOWER_THRESHOLD :
                             gi_dict['gi_'+ str(gi_num)] = [prev]
                             gi_dict['gi_'+ str(gi_num)].append(row)    
                         else :
                             gi_dict['gi_'+ str(gi_num)] = [row]     
                 prev_gi = True         
             if found_gi == False and prev_gi == True:
-                if row[3] > self.lower_threshold :
+                if row[3] > parameters.LOWER_THRESHOLD :
                     gi_dict['gi_'+ str(gi_num)].append(row)
                 prev_gi = False
                 gi_num += 1
@@ -145,17 +140,17 @@ class identifyGI:
 
         # Determine the start, end, upper and lower limit for each GI
 
-        if (gi_regions[gi][0][3] < self.upper_threshold ):     
+        if (gi_regions[gi][0][3] < parameters.UPPER_THRESHOLD ):
             start = gi_regions[gi][1][0]
-            lower_limit = (gi_regions[gi][0][0]) + (self.window_size/2)
+            lower_limit = (gi_regions[gi][0][0]) + (parameters.WINDOW_SIZE/2)
         else :     
             start = gi_regions[gi][0][0]
             lower_limit = (gi_regions[gi][0][0]) 
             first_frag_gi = 1
 
-        if (gi_regions[gi][-1][3] < self.upper_threshold):
+        if (gi_regions[gi][-1][3] < parameters.UPPER_THRESHOLD):
             end = gi_regions[gi][-2][1]
-            upper_limit = (gi_regions[gi][-1][1]) - (self.window_size/2)
+            upper_limit = (gi_regions[gi][-1][1]) - (parameters.WINDOW_SIZE/2)
         else:
             end = gi_regions[gi][-1][1]
             upper_limit = (gi_regions[gi][-1][1])   
@@ -166,7 +161,7 @@ class identifyGI:
 
         # Determine probability of merged regions
 
-        if end-start <= (self.window_size) :
+        if end-start <= (parameters.WINDOW_SIZE) :
             if first_frag_gi == 0:       
                 merged_GI_prob = gi_regions[gi][1][3]
             if first_frag_gi == 1:       
@@ -199,16 +194,16 @@ class identifyGI:
         tune_metric = abs(left_tune_metric) if left_tune_metric != 0 else abs(right_tune_metric)
         border_left = True if right_tune_metric == 0  else False
 
-        for i in range(int((self.minimum_gi_size/(2*tune_metric)))) :
+        for i in range(int((parameters.MINIMUM_GI_SIZE/(2*tune_metric)))) :
             left_border += left_tune_metric
             right_border += right_tune_metric  
-            if ((right_border - left_border + 1 ) < self.minimum_gi_size or left_border < (left_limit) or right_border > right_limit):      
+            if ((right_border - left_border + 1 ) < parameters.MINIMUM_GI_SIZE or left_border < (left_limit) or right_border > right_limit):
                 break
             frag_border = [left_border,right_border]
             frag_prob = self.find_fragment_probability(frag_border, dna_sequence)
             if (travelling_inward):
                 previous_prob = tune_probs[-1][2]       
-                if (frag_prob < self.lower_threshold):                    
+                if (frag_prob < parameters.LOWER_THRESHOLD):
                     if (border_left):
                         new_borders = [old_borders[0],tune_probs[-1][0]]
                     else: 
@@ -217,7 +212,7 @@ class identifyGI:
                 if (previous_prob > frag_prob):
                     break        
             else:
-                if (frag_prob < self.upper_threshold):
+                if (frag_prob < parameters.UPPER_THRESHOLD):
                     break    
             tune_probs.append([left_border,right_border,frag_prob]) 
             new_borders = [left_border,right_border] 
@@ -247,22 +242,22 @@ class identifyGI:
 
         #Find left outer boundary
         
-        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,-self.tune_metric,0,tune_probs, dna_sequence) 
+        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,-parameters.TUNE_METRIC,0,tune_probs, dna_sequence)
         left_ob = new_limits[0]
         
         #Find left inner boundary
         
-        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,self.tune_metric,0,tune_probs, dna_sequence)
+        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,parameters.TUNE_METRIC,0,tune_probs, dna_sequence)
         left_ib = new_limits[0]         
         
         #Find right outer boundary
         
-        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,0,self.tune_metric,tune_probs, dna_sequence)
+        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,0,parameters.TUNE_METRIC,tune_probs, dna_sequence)
         right_ob =  new_limits[1]
         
         #Find right inner boundary
         
-        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,0,-self.tune_metric,tune_probs, dna_sequence)
+        tune_probs, new_limits = self.get_tuned_borders(left_border,right_border,tune_limit,0,-parameters.TUNE_METRIC,tune_probs, dna_sequence)
         right_ib = new_limits[1]
         
         #If left and/or right borders have moved in, then consider inner border, 
@@ -307,9 +302,11 @@ class identifyGI:
         ''' 
         Main function to call all other functions for identifying GI regions
         '''   
-        all_gi_borders =[]
+        all_gi_borders = []
+        org_count = 0
         for dna_sequence in self.dna_sequence_list:
-            id = dna_sequence.id
+            org_count += 1
+            id = str(org_count) + "_" + dna_sequence.id
             processed_dna_seq,segment_borders = self.split_dna_sequence(dna_sequence)
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
             dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders)

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import sys
-from treasureisland.gi_driver import gi_driver
+from treasureisland.program import Program
 
 
 # driver = gi_driver("C:/Users/USER/GenomicIslandPrediction/genome/test.fasta") # enter local path for sequence file
 
 def main(seqfile):
-    driver = gi_driver(seqfile)
+    driver = Program(seqfile)
     pred = driver.get_predictions()
     driver.predictions_to_csv(pred)
     driver.predictions_to_excel(pred)
