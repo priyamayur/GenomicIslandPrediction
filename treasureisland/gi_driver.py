@@ -17,8 +17,7 @@ class gi_driver:
 
 
   def format_input(self):
-    input_format = self.input.split(".")[1]    
-    sequences = list(SeqIO.parse(self.input, input_format))
+    sequences = list(SeqIO.parse(self.input, "fasta"))
     return sequences
 
   def process_output(self, output):
