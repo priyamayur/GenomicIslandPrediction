@@ -1,10 +1,11 @@
-from treasureisland.identifyGI import identifyGI
+from treasureisland.IdentifyGI import IdentifyGI
 import pickle
 import pandas as pd
 from Bio import SeqIO
 import os
 from . import models
 from importlib import resources
+import time
 
 
 class Program:
@@ -23,26 +24,28 @@ class Program:
             for gi in seq.keys():
                 gi_result = seq[gi]
                 id = gi_result[0]
-                all_gi_dict[id] = []
                 start = gi_result[1] + 1
                 end = gi_result[2]
                 pred = gi_result[3]
-                if id not in all_gi_dict.keys():
-                    all_gi_dict[id] = [[id, start, end, pred]]
-                else :
+                if id in all_gi_dict.keys():
                     all_gi_dict[id].append([id, start, end, pred])
-
+                else :
+                    all_gi_dict[id] = [[id, start, end, pred]]
+        print("output")
+        print(all_gi_dict)
         return all_gi_dict
 
     def get_predictions(self):
-
+        start_time = time.time()
+        print("--- %s seconds ---" % (time.time() - start_time))
         dna_sequence = self.format_input()
         dna_emb_model, classifier = self.get_models()
-        genome = identifyGI(dna_sequence, dna_emb_model, classifier)
+        genome = IdentifyGI(dna_sequence, dna_emb_model, classifier)
         fine_tuned_pred = genome.find_gi_predictions()
 
-        output_dataframe = self.process_output(fine_tuned_pred)
-        return output_dataframe
+        output = self.process_output(fine_tuned_pred)
+        print("--- %s seconds ---" % (time.time() - start_time))
+        return output
 
     @staticmethod
     def get_models():
