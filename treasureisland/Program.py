@@ -59,20 +59,20 @@ class Program:
 
     def predictions_to_excel(self, predictions):
         for org in predictions.keys():
-            df = pd.DataFrame(predictions[org], columns=['id', 'start', 'end', 'probability'])
+            df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
             filename = 'output_' + org + '.xlsx'
             pd.DataFrame(df).to_excel(filename)
 
     def predictions_to_csv(self, predictions):
         for org in predictions.keys():
-            df = pd.DataFrame(predictions[org], columns=['id', 'start', 'end', 'probability'])
+            df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
             filename = 'output_' + org + '.csv'
             pd.DataFrame(df).to_csv(filename)
 
 
     def predictions_to_text(self, predictions):
         for org in predictions.keys():
-            df = pd.DataFrame(predictions[org], columns=['id', 'start', 'end', 'probability'])
+            df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
             filename = 'output_' + org + '.txt'
             pd.DataFrame(df).to_csv(filename, header=None, index=None, sep=' ', mode='a')
 

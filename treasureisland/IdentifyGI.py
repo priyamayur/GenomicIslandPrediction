@@ -268,7 +268,8 @@ class IdentifyGI:
         org_count = 0
         for dna_sequence in self.dna_sequence_list:
             org_count += 1
-            id = str(org_count) + "_" + dna_sequence.id
+            #id = str(org_count) + "_" + dna_sequence.id #commented out for evaluations
+            id = dna_sequence.id
             pre_process = PreprocessData()
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
