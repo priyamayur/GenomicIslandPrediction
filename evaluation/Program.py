@@ -62,7 +62,8 @@ class Program:
         organism_pos_dict, organism_neg_dict, organism_pos_test_dict, organism_neg_test_dict, organism_lit_dict, model_dict = self.get_dictionary()
 
         print("evaluation of complete 104 organism")
-        eval.evaluations_main_104(organism_pos_dict.keys(), model_dict, organism_pos_dict, organism_neg_dict)
+        eval.evaluations_main_104(model_dict['treasureisland_dict'].keys(), model_dict, organism_pos_dict, organism_neg_dict)
+        #eval.evaluations_main_104(organism_pos_dict.keys(), model_dict, organism_pos_dict, organism_neg_dict)
         # ---------------------------------------------------------------------------------------
         all_predictor = [model_dict['islandpath_dimob_dict'], model_dict['sigi_hmm_dict'],
                          model_dict['islandpick_dict'], model_dict['islander_dict'], model_dict['alien_hunter_dict'],

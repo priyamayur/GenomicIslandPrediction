@@ -15,7 +15,7 @@ def main(seqfile):
     pred = driver.get_predictions()
     flat_pred = flatten_result(pred)
     df = pd.DataFrame(flat_pred, columns=['accession', 'start', 'end', 'probability'])
-    filename = 'result_30_10000_75.xlsx'
+    filename = 'result_2_10000_75.xlsx'
     pd.DataFrame(df).to_excel(filename)
 
 if __name__ == '__main__':

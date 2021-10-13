@@ -155,8 +155,6 @@ class IdentifyGI:
         :return: preFinedTuneGEI
         '''
 
-        start_limit = 0
-        end_limit = -1
         if mergedGEI.flanking_start != 0:
             start_limit = mergedGEI.start - (Parameters.WINDOW_SIZE / 2)
         else:
@@ -212,23 +210,26 @@ class IdentifyGI:
         :return:
         '''
 
+        current_obj = next_obj = FineTunedGEI(preFineTunedGEI.name, preFineTunedGEI.start, preFineTunedGEI.end,
+                                              preFineTunedGEI.prob)
+        significant_change = 0.1
+
         if has_flanking_segment:
             direction_left = border_side_l * -1
             direction_right = border_side_r * 1
+            while_clause = next_obj.prob >= current_obj.prob or (current_obj.prob - next_obj.prob) < significant_change
         else:
             direction_left = border_side_l * 1
             direction_right = border_side_r * -1
+            while_clause = next_obj.prob > current_obj.prob
 
-        current_obj = next_obj = FineTunedGEI(preFineTunedGEI.name, preFineTunedGEI.start, preFineTunedGEI.end, preFineTunedGEI.prob)
-        significant_change = 0.01
-        while((next_obj.prob >= current_obj.prob or (current_obj.prob - next_obj.prob) < significant_change) and
-              next_obj.start <= preFineTunedGEI.start_limit and
+        while(next_obj.prob >= Parameters.UPPER_THRESHOLD and
+              next_obj.start >= preFineTunedGEI.start_limit and
               next_obj.end <= preFineTunedGEI.end_limit and
-              (next_obj.end - next_obj.start) >= Parameters.MINIMUM_GI_SIZE
+              (next_obj.end - next_obj.start) >= Parameters.MINIMUM_GI_SIZE and
+              while_clause
         ):
             print("enter while")
-            print("current_obj" + str(current_obj))
-            print("next_obj" + str(next_obj))
             current_obj = copy(next_obj)
             next_obj.start = next_obj.start + (Parameters.TUNE_METRIC * direction_left)
             next_obj.end = next_obj.end + Parameters.TUNE_METRIC * direction_right
