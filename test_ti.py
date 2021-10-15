@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 import sys
-from treasureisland.program import Program
-
-
-# driver = gi_driver("C:/Users/USER/GenomicIslandPrediction/genome/test.fasta") # enter local path for sequence file
+from treasureisland.Program import Program
 
 def main(seqfile):
     driver = Program(seqfile)

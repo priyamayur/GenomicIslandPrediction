@@ -229,15 +229,15 @@ class IdentifyGI:
               (next_obj.end - next_obj.start) >= Parameters.MINIMUM_GI_SIZE and
               while_clause
         ):
-            print("enter while")
+            #print("enter while")
             current_obj = copy(next_obj)
             next_obj.start = next_obj.start + (Parameters.TUNE_METRIC * direction_left)
             next_obj.end = next_obj.end + Parameters.TUNE_METRIC * direction_right
             frag_prob = self.find_fragment_probability([next_obj.start, next_obj.end], dna_sequence)
             next_obj = FineTunedGEI(preFineTunedGEI.name, next_obj.start, next_obj.end, frag_prob)
-            print("current_obj" + str(current_obj))
-            print("next_obj" + str(next_obj))
-        print("current_obj" + str(current_obj))
+            #print("current_obj" + str(current_obj))
+            #print("next_obj" + str(next_obj))
+        #print("current_obj" + str(current_obj))
         return current_obj
 
     def find_GI_borders(self, gi_regions, id, dna_sequence):
@@ -248,15 +248,15 @@ class IdentifyGI:
 
         gi_borders = {}
         mergedGEIS = self.merge(gi_regions, dna_sequence)
-        print("merged_regions")
-        print(mergedGEIS)
+        #print("merged_regions")
+        #print(mergedGEIS)
         for mergedGEI in mergedGEIS:
             preFineTuned = self.pre_fine_tune(mergedGEI)
-            print("preFineTuned")
-            print(preFineTuned)
+            #print("preFineTuned")
+            #print(preFineTuned)
             fineTuned = self.fine_tune(preFineTuned, dna_sequence)
-            print("fineTuned")
-            print(fineTuned)
+            #print("fineTuned")
+            #print(fineTuned)
             gi_borders[fineTuned.name] = [id, fineTuned.start, fineTuned.end, fineTuned.prob]
 
         return gi_borders
@@ -275,14 +275,14 @@ class IdentifyGI:
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
             dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders)
-            print("dna_prob")
-            print(dna_prob)
+            #print("dna_prob")
+            #print(dna_prob)
             gi_regions = self.get_GI_regions(dna_prob)
-            print("gi_regions")
-            print(gi_regions)
+            #print("gi_regions")
+            #print(gi_regions)
             gi_borders = self.find_GI_borders(gi_regions, id, dna_sequence)
-            print("gi_borders")
-            print(gi_borders)
+            #print("gi_borders")
+            #print(gi_borders)
             all_gi_borders.append(gi_borders)
 
         return all_gi_borders

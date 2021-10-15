@@ -31,8 +31,8 @@ class Program:
                     all_gi_dict[id].append([id, start, end, pred])
                 else :
                     all_gi_dict[id] = [[id, start, end, pred]]
-        print("output")
-        print(all_gi_dict)
+        #print("output")
+        #print(all_gi_dict)
         return all_gi_dict
 
     def get_predictions(self):
