@@ -8,18 +8,18 @@ Python >= 3.7
 
 ## Installation and Usage:
 
-#Use pip to install the package :
-
+### Use pip to install the package :
 TreasureIsland can be installed by python package management system "pip" :
-   pip install treasureisland --pre
+
+    pip install treasureisland --pre 
 
 The treasureisland package can be used to find predictions and downloaded as csv, xlsx, txt files demonstrated in [TreasureIsland package](#TreasureIsland-package)
 
-#Locally install package and use it:
-   git clone https://github.com/priyamayur/GenomicIslandPrediction.git
-   python -m pip install -e GenomicIslandPrediction
-   cd GenomicIslandPrediction
-   python test_ti <DNA file> 
+### Locally install package and use it:
+    git clone https://github.com/priyamayur/GenomicIslandPrediction.git
+    python -m pip install -e GenomicIslandPrediction
+    cd GenomicIslandPrediction
+    python test_ti <DNA file> 
 
 
 ## TreasureIsland package:
