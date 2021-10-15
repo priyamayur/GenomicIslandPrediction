@@ -15,14 +15,14 @@ TreasureIsland can be installed by python package management system "pip" :
 
 The treasureisland package can be used to find predictions and downloaded as csv, xlsx, txt files demonstrated in [TreasureIsland package](#TreasureIsland-package)
 
-### Locally install package and use it:
+### Option1 - Locally install package and use it:
     git clone https://github.com/priyamayur/GenomicIslandPrediction.git
     python -m pip install -e GenomicIslandPrediction
     cd GenomicIslandPrediction
     python test_ti <DNA file> 
 
 
-## TreasureIsland package:
+## Option2 - TreasureIsland package:
 
 import the sequence class from treasureisland package:
 
