@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 import sys
-from treasureisland.Program import Program
+from treasureisland.dna_sequence import sequence
+
 
 def main(seqfile):
-    driver = Program(seqfile)
-    pred = driver.get_predictions()
-    driver.predictions_to_csv(pred)
-    driver.predictions_to_excel(pred)
-    driver.predictions_to_text(pred)
+    seq = sequence(seqfile)
+    pred = seq.predict(seqfile)
+    seq.predictions_to_csv(pred)
+    seq.predictions_to_excel(pred)
+    seq.predictions_to_text(pred)
+
 
 if __name__ == '__main__':
     main(sys.argv[1])

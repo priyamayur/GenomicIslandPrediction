@@ -1,39 +1,50 @@
 # TREASUREISLAND
 
-TreasureIsland is a machine learning-based Genomic Island prediction software, that uses an unsupervised representation of DNA for its prediction.
+TreasureIsland python package is a machine learning-based Genomic Island prediction software, that uses an unsupervised representation of DNA for its prediction.
 
-## Installation :
+## Dependency :
 
-Use pip to install the package :
+Python >= 3.7
 
-    pip install treasureisland
+## Installation and Usage:
 
-## Sample code:
+#Use pip to install the package :
 
-Sample code can be found in test.py 
+TreasureIsland can be installed by python package management system "pip" :
+   pip install treasureisland --pre
 
-import the gi_driver from treasure island package:
+The treasureisland package can be used to find predictions and downloaded as csv, xlsx, txt files demonstrated in [TreasureIsland package](#TreasureIsland-package)
 
-    from treasureisland.gi_driver import gi_driver 
+#Locally install package and use it:
+   git clone https://github.com/priyamayur/GenomicIslandPrediction.git
+   python -m pip install -e GenomicIslandPrediction
+   cd GenomicIslandPrediction
+   python test_ti <DNA file> 
 
-Instantiate the gi_driver with the DNA sequence file path as the argument. 
+
+## TreasureIsland package:
+
+import the sequence class from treasureisland package:
+
+    from treasureisland.dna_sequence import sequence 
+
+Instantiate the sequence with the DNA sequence file path as the argument. 
 The DNA file used can be a fasta or genbank file.
 
-    driver = gi_driver("C:/Users/USER/GenomicIslandPrediction/genome/bsub.fasta") # enter local path for sequence file
+    seq = sequence("C:/Users/USER/GenomicIslandPrediction/genome/bsub.fasta") # enter local path for sequence file
 
-Get prediction data frame from gi_driver by running the get predictions.
+Get prediction data frame from sequence by running the predict method.
 
-    pred = driver.get_predictions()
+    pred = seq.predict(seqfile)
 
 The predictions can be downloaded in text, csv, excel formats.
 
-    driver.predictions_to_csv(pred)
+    seq.predictions_to_csv(pred)
+    seq.predictions_to_excel(pred)
+    seq.predictions_to_text(pred)
 
-    driver.predictions_to_excel(pred)
+The sample outputs can be found in the repository - output_NC_002620.2.txt, output_NC_002620.2.csv, output_NC_002620.2.xlsx 
 
-    driver.predictions_to_text(pred)
-
-The sample outputs can be found in the repository - output.txt, output.csv, output.xlsx 
 
 
 
