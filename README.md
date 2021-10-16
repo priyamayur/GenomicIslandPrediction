@@ -13,7 +13,7 @@ TreasureIsland can be installed by python package management system "pip" :
 
     pip install treasureisland --pre 
 
-### Option2 - Locally install package and use it:
+### Option2 - Locally install package:
     git clone https://github.com/priyamayur/GenomicIslandPrediction.git
     python -m pip install -e GenomicIslandPrediction
     
