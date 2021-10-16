@@ -58,8 +58,9 @@ The sample outputs can be found in the repository - output_NC_002620.2.txt, outp
 Repository contains some [sample DNA files](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/genome) that can be used to test the TreasureIsland.
     
 example :
-     cd GenomicIslandPrediction
-     python test_ti genome/ecoli.fasta
+    
+    cd GenomicIslandPrediction
+    python test_ti genome/ecoli.fasta    
 
 
 ## TreasureIsland package:
