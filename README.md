@@ -6,23 +6,31 @@ TreasureIsland python package is a machine learning-based Genomic Island predict
 
 Python >= 3.7
 
-## Installation and Usage:
+## Installation:
 
-### Use pip to install the package :
+### Option1 - Use pip to install the package :
 TreasureIsland can be installed by python package management system "pip" :
 
     pip install treasureisland --pre 
 
-The treasureisland package can be used to find predictions and downloaded as csv, xlsx, txt files demonstrated in [TreasureIsland package](#TreasureIsland-package)
-
-### Option1 - Locally install package and use it:
+### Option2 - Locally install package and use it:
     git clone https://github.com/priyamayur/GenomicIslandPrediction.git
     python -m pip install -e GenomicIslandPrediction
+    
+    
+## Usage:
+
+The treasureisland package can be used to find predictions and downloaded as csv, xlsx, txt files demonstrated in [TreasureIsland package](#TreasureIsland-package)
+
+Or, run script locally:
+Clone the github repository if not cloned before:   
+    git clone https://github.com/priyamayur/GenomicIslandPrediction.git
     cd GenomicIslandPrediction
     python test_ti <DNA file> 
+    
 
 
-## Option2 - TreasureIsland package:
+## TreasureIsland package:
 
 import the sequence class from treasureisland package:
 
