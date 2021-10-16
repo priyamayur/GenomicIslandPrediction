@@ -51,13 +51,15 @@ The results are shown in the following format for each genomic island:
 
 example : NC_002620.2 1.0 130000.0 0.95597
     
+The sample outputs can be found in the repository - output_NC_002620.2.txt, output_NC_002620.2.csv, output_NC_002620.2.xlsx     
+    
 ### Testing:
     
 Repository contains some [sample DNA files](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/genome) that can be used to test the TreasureIsland.
     
 example :
-    cd GenomicIslandPrediction
-    python test_ti genome/ecoli.fasta
+     cd GenomicIslandPrediction
+     python test_ti genome/ecoli.fasta
 
 
 ## TreasureIsland package:
@@ -81,7 +83,7 @@ The predictions can be downloaded in text, csv, excel formats.
     seq.predictions_to_excel(pred)
     seq.predictions_to_text(pred)
 
-The sample outputs can be found in the repository - output_NC_002620.2.txt, output_NC_002620.2.csv, output_NC_002620.2.xlsx 
+
 
 
 ## Contact:
