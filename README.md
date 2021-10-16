@@ -22,7 +22,7 @@ TreasureIsland can be installed by python package management system "pip" :
 
 The treasureisland package can be used to find predictions and downloaded as csv, xlsx, txt files demonstrated in [TreasureIsland package](#TreasureIsland-package)
 
-Or, run script locally:
+Or, run script locally to get predicitons quickly:
 
 Clone the github repository if not cloned before:   
 
