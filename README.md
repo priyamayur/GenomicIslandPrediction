@@ -22,7 +22,7 @@ TreasureIsland can be installed by python package management system "pip" :
     
 ## Usage:
 
-The treasureisland package can be used to find predictions and downloaded as csv, xlsx, txt files demonstrated in [TreasureIsland package](#TreasureIsland-package)
+The treasureisland package is used to find genomic island predictions which can be downloaded as csv, xlsx, txt files demonstrated in [TreasureIsland package](#TreasureIsland-package)
 
 Or, run script locally to get predicitons quickly:
 
@@ -32,6 +32,32 @@ Clone the github repository if not cloned before:
     cd GenomicIslandPrediction
     python test_ti <DNA file>     
     
+### Input file:
+
+DNA sequence files in formats - fasta(recommended) or genbank with a sequenceID.
+
+example: >NC_002620.2 Chlamydia muridarum str. Nigg, complete sequence
+CACATAGCAAAACACTCAAAGTTTTTCAGCAAAAAAGCTTGTTGAAAAAATTGTTGACCGCCTGTTCACA....
+
+### Performance:
+
+TreasureIsland takes 2-5 mins to run depending on the size of the input.
+
+### Output :
+
+Can be downloaded in csv, xlsx, txt formats.
+The results are shown in the following format for each genomic island:
+<sequenceID> <start> <end> <confidence>
+
+example : NC_002620.2 1.0 130000.0 0.95597
+    
+### Testing:
+    
+Repository contains some [sample DNA files](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/genome) that can be used to test the TreasureIsland.
+    
+example :
+    cd GenomicIslandPrediction
+    python test_ti genome/ecoli.fasta
 
 
 ## TreasureIsland package:
