@@ -25,6 +25,7 @@ The treasureisland package can be used to find predictions and downloaded as csv
 Or, run script locally:
 
 Clone the github repository if not cloned before:   
+
     git clone https://github.com/priyamayur/GenomicIslandPrediction.git
     cd GenomicIslandPrediction
     python test_ti <DNA file> 
