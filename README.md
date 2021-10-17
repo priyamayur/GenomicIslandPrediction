@@ -34,7 +34,7 @@ Clone the github repository if not cloned before:
     
 ### Input file:
 
-DNA sequence files in formats - fasta(recommended) or genbank with a sequenceID.
+DNA sequence files in fasta format with a sequenceID.
 
 example: >NC_002620.2 Chlamydia muridarum str. Nigg, complete sequence
 CACATAGCAAAACACTCAAAGTTTTTCAGCAAAAAAGCTTGTTGAAAAAATTGTTGACCGCCTGTTCACA....
@@ -47,7 +47,7 @@ TreasureIsland takes 2-5 mins to run depending on the size of the input.
 
 Can be downloaded in csv, xlsx, txt formats.
 The results are shown in the following format for each genomic island:
-<sequenceID> <start> <end> <confidence>
+<sequenceID> <start> <end> <probability of GEI>
 
 example : NC_002620.2 1.0 130000.0 0.95597
     
