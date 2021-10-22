@@ -30,7 +30,7 @@ Clone the github repository if not cloned before:
 
     git clone https://github.com/priyamayur/GenomicIslandPrediction.git
     cd GenomicIslandPrediction
-    python test_ti.py <DNA file>     
+    python run_treasureisland.py <DNA file>     
     
 ### Input file:
 
@@ -60,7 +60,7 @@ Repository contains some [sample DNA files](https://github.com/priyamayur/Genomi
 example :
     
     cd GenomicIslandPrediction
-    python test_ti.py genome/ecoli.fasta    
+    python run_treasureisland.py genome/ecoli.fasta    
 
 
 ## TreasureIsland package:
