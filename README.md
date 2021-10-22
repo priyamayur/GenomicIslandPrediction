@@ -13,7 +13,7 @@ Python >= 3.7
 ### Option1 - Use pip to install the package :
 TreasureIsland can be installed by python package management system "pip" :
 
-    pip install treasureisland --pre 
+    pip install treasureisland
 
 ### Option2 - Locally install package:
     git clone https://github.com/priyamayur/GenomicIslandPrediction.git
@@ -30,7 +30,7 @@ Clone the github repository if not cloned before:
 
     git clone https://github.com/priyamayur/GenomicIslandPrediction.git
     cd GenomicIslandPrediction
-    python test_ti <DNA file>     
+    python test_ti.py <DNA file>     
     
 ### Input file:
 
@@ -60,7 +60,7 @@ Repository contains some [sample DNA files](https://github.com/priyamayur/Genomi
 example :
     
     cd GenomicIslandPrediction
-    python test_ti genome/ecoli.fasta    
+    python test_ti.py genome/ecoli.fasta    
 
 
 ## TreasureIsland package:
@@ -76,16 +76,13 @@ The DNA file used can be a fasta or genbank file.
 
 Get prediction data frame from sequence by running the predict method.
 
-    pred = seq.predict(seqfile)
+    pred = seq.predict()
 
 The predictions can be downloaded in text, csv, excel formats.
 
     seq.predictions_to_csv(pred)
     seq.predictions_to_excel(pred)
     seq.predictions_to_text(pred)
-
-
-
 
 ## Contact:
 
