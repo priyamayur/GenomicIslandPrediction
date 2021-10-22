@@ -37,7 +37,7 @@ class sequence:
 
 
     def __get_models(self):
-        read_classifier = resources.read_binary(models, "svm_upgrade_gensim_sklearn")
+        read_classifier = resources.read_binary(models, "svm_upgrade_gensim_sklearn_1.0")
         classifier = pickle.loads(read_classifier)
 
         read_emb_model = resources.read_binary(models, "doc2vec_upgrade_gensim")
@@ -46,14 +46,14 @@ class sequence:
         return dna_emb_model, classifier
 
 
-    def predict(self, input_file):
+    def predict(self):
         '''
         :return: dictionary of genomic island predictions
         '''
 
         start_time = time.time()
         print("--- start predicting ---")
-        dna_sequence = self.__format_input(input_file)
+        dna_sequence = self.__format_input(self.input)
         dna_emb_model, classifier = self.__get_models()
         genome = IdentifyGI(dna_sequence, dna_emb_model, classifier)
         fine_tuned_pred = genome.find_gi_predictions()

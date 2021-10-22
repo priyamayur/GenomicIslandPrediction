@@ -5,7 +5,7 @@ from treasureisland.dna_sequence import sequence
 
 def main(seqfile):
     seq = sequence(seqfile)
-    pred = seq.predict(seqfile)
+    pred = seq.predict()
     seq.predictions_to_csv(pred)
     seq.predictions_to_excel(pred)
     seq.predictions_to_text(pred)
