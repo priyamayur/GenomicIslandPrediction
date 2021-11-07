@@ -19,6 +19,10 @@ class Predictor:
         return sequences
 
     def __process_output(self, output):
+        current_directory = os.getcwd()
+        final_directory = os.path.join(current_directory, r'output')
+        if not os.path.exists(final_directory):
+            os.makedirs(final_directory)
         all_gi_dict = {}
         for seq in output:
             for gi in seq.keys():
@@ -65,19 +69,19 @@ class Predictor:
     def predictions_to_excel(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = 'output_' + org + '.xlsx'
+            filename = 'output/output_' + org + '.xlsx'
             pd.DataFrame(df).to_excel(filename)
 
 
     def predictions_to_csv(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = 'output_' + org + '.csv'
+            filename = 'output/output_' + org + '.csv'
             pd.DataFrame(df).to_csv(filename)
 
 
     def predictions_to_text(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = 'output_' + org + '.txt'
+            filename = 'output/output_' + org + '.txt'
             pd.DataFrame(df).to_csv(filename, header=None, index=None, sep=' ', mode='a')
