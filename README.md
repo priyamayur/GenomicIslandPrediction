@@ -13,7 +13,7 @@ Python >= 3.7
 ### Option1 - Use pip to install the package :
 TreasureIsland can be installed by python package management system "pip" :
 
-    pip install treasureisland
+    python -m pip install treasureisland
 
 ### Option2 - Locally install package:
     git clone https://github.com/priyamayur/GenomicIslandPrediction.git
@@ -22,16 +22,14 @@ TreasureIsland can be installed by python package management system "pip" :
     
 ## Usage:
 
-The treasureisland package is used to find genomic island predictions which can be downloaded as csv, xlsx, txt files demonstrated in [TreasureIsland package](#TreasureIsland-package)
+### Option1 - Run TreasureIsland directly from commandline  :
+Run TreasureIsland from commandline on your DNA fasta file (example DNA files provided [here](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/genome)), output is given in csv format:
 
-Or, run script locally to get predicitons quickly:
-
-Clone the github repository if not cloned before:   
-
-    git clone https://github.com/priyamayur/GenomicIslandPrediction.git
-    cd GenomicIslandPrediction
-    python run_treasureisland.py <DNA file>     
+    python -m treasureisland <DNA file>     
     
+### Option2 - Run TreasureIsland from python :
+The TreasureIsland package is used to find genomic island predictions which can be downloaded in csv, xlsx, txt file formats demonstrated in [TreasureIsland package](#Running-TreasureIsland-package-from-python)
+
 ### Input file:
 
 DNA sequence files in fasta format with a sequenceID.
@@ -45,34 +43,33 @@ TreasureIsland takes 2-5 mins to run depending on the size of the input.
 
 ### Output :
 
-Can be downloaded in csv, xlsx, txt formats.
 The results are shown in the following format for each genomic island:
 <sequenceID> <start> <end> <probability of GEI>
 
 example : NC_002620.2 1.0 130000.0 0.95597
     
-The sample outputs can be found in the repository - output_NC_002620.2.txt, output_NC_002620.2.csv, output_NC_002620.2.xlsx     
+The sample outputs can be found in the repository folder 'output' -output_NC_002620.2.csv   
     
 ### Testing:
     
-Repository contains some [sample DNA files](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/genome) that can be used to test the TreasureIsland.
+Repository contains some [sample DNA files](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/genome) that can be downloaded to test the TreasureIsland. 
+Note : github downloads fasta file in txt format (filename.fasta.txt). 
     
 example :
     
-    cd GenomicIslandPrediction
-    python run_treasureisland.py genome/ecoli.fasta    
+    python -m treasureisland ecoli.fasta   
 
 
-## TreasureIsland package:
+### Running TreasureIsland package from python:
 
-import the sequence class from treasureisland package:
+import the Predictor class from treasureisland package:
 
-    from treasureisland.dna_sequence import sequence 
+    from treasureisland.Predictor import Predictor
 
 Instantiate the sequence with the DNA sequence file path as the argument. 
 The DNA file used can be a fasta or genbank file.
 
-    seq = sequence("C:/Users/USER/GenomicIslandPrediction/genome/bsub.fasta") # enter local path for sequence file
+    seq = Predictor("<Path to DNA fasta file>/bsub.fasta") 
 
 Get prediction data frame from sequence by running the predict method.
 
