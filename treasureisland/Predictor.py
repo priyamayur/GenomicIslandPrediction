@@ -14,8 +14,7 @@ class Predictor:
         self.input = file_path
 
     def __format_input(self, input):
-        file_extension = os.path.splitext(input)[1][1:]
-        sequences = list(SeqIO.parse(input, file_extension))
+        sequences = list(SeqIO.parse(input, "fasta"))
         return sequences
 
     def __process_output(self, output):
