@@ -19,7 +19,10 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],                                      # Information to filter the project on PyPi website
     python_requires='>=3.7',                # Minimum version requirement of the package
-    py_modules=["treasureisland"],           # Name of the python package    
+    py_modules=["treasureisland"],
+    entry_points = {
+        'console_scripts': ['treasureisland=treasureisland.treasureisland:main'],
+    },
     include_package_data=True,
     install_requires=[
         'gensim>=4.0.1',
@@ -27,5 +30,5 @@ setuptools.setup(
         'scikit-learn==1.0',
         'pandas',
         'openpyxl'
-   ]                     
+   ]
 )

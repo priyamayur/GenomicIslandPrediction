@@ -10,8 +10,9 @@ import time
 
 class Predictor:
 
-    def __init__(self, file_path):
-        self.input = file_path
+    def __init__(self, input_file_path, output_file_path):
+        self.input = input_file_path
+        self.output_file_path = output_file_path
 
     def __format_input(self, input):
         sequences = list(SeqIO.parse(input, "fasta"))
@@ -19,7 +20,7 @@ class Predictor:
 
     def __process_output(self, output):
         current_directory = os.getcwd()
-        final_directory = os.path.join(current_directory, r'output')
+        final_directory = os.path.join(current_directory, self.output_file_path)
         if not os.path.exists(final_directory):
             os.makedirs(final_directory)
         all_gi_dict = {}
@@ -68,19 +69,19 @@ class Predictor:
     def predictions_to_excel(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = 'output/output_' + org + '.xlsx'
+            filename = self.output_file_path + "/_" + org + '.xlsx'
             pd.DataFrame(df).to_excel(filename)
 
 
     def predictions_to_csv(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = 'output/output_' + org + '.csv'
+            filename = self.output_file_path + "/_" +org + '.csv'
             pd.DataFrame(df).to_csv(filename)
 
 
     def predictions_to_text(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = 'output/output_' + org + '.txt'
+            filename = self.output_file_path + "/_" + org + '.txt'
             pd.DataFrame(df).to_csv(filename, header=None, index=None, sep=' ', mode='a')
