@@ -263,13 +263,13 @@ class IdentifyGI:
             org_count += 1
             print("--- sequence " + str(org_count) + "---")
             print("approximate prediction time : 2-5 minutes")
-            id = dna_sequence.id
+            seq_id = dna_sequence.id
             pre_process = PreprocessData()
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
             dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders)
             gi_regions = self.get_GI_regions(dna_prob)
-            gi_borders = self.find_GI_borders(gi_regions, id, dna_sequence)
+            gi_borders = self.find_GI_borders(gi_regions, seq_id, dna_sequence)
             all_gi_borders.append(gi_borders)
 
         return all_gi_borders

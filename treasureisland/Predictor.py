@@ -11,7 +11,7 @@ import time
 class Predictor:
 
     def __init__(self, input_file_path, output_file_path):
-        self.input = input_file_path
+        self.input_file_path = input_file_path
         self.output_file_path = output_file_path
 
     def __format_input(self, input):
@@ -55,7 +55,7 @@ class Predictor:
 
         start_time = time.time()
         print("--- start predicting ---")
-        dna_sequence = self.__format_input(self.input)
+        dna_sequence = self.__format_input(self.input_file_path)
         dna_emb_model, classifier = self.__get_models()
         genome = IdentifyGI(dna_sequence, dna_emb_model, classifier)
         fine_tuned_pred = genome.find_gi_predictions()
@@ -69,19 +69,19 @@ class Predictor:
     def predictions_to_excel(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = self.output_file_path + "/_" + org + '.xlsx'
+            filename = self.output_file_path + "/" + org + '.xlsx'
             pd.DataFrame(df).to_excel(filename)
 
 
     def predictions_to_csv(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = self.output_file_path + "/_" +org + '.csv'
+            filename = self.output_file_path + "/" +org + '.csv'
             pd.DataFrame(df).to_csv(filename)
 
 
     def predictions_to_text(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = self.output_file_path + "/_" + org + '.txt'
-            pd.DataFrame(df).to_csv(filename, header=None, index=None, sep=' ', mode='a')
+            filename = self.output_file_path + "/" + org + '.txt'
+            pd.DataFrame(df).to_csv(filename, header=None, index=None, sep=' ', mode='w')
