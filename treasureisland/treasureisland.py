@@ -16,4 +16,4 @@ def main():
 
     seq = Predictor(seqfile, output)
     pred = seq.predict()
-    seq.predictions_to_text(pred)
+    seq.predictions_to_csv(pred)
