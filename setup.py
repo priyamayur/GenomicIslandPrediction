@@ -27,7 +27,7 @@ setuptools.setup(
     install_requires=[
         'gensim>=4.0.1',
         'biopython>=1.79',        
-        'scikit-learn==1.0',
+        'scikit-learn==1.0.1',
         'pandas',
         'openpyxl'
    ]

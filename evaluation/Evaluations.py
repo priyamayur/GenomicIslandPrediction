@@ -1,4 +1,5 @@
 import math as math
+import pickle
 
 class Evaluations:
 
@@ -53,7 +54,7 @@ class Evaluations:
             mcc_org = ((TP * TN) - (FP * FN)) / math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN)) if math.sqrt(
                 (TP + FP) * (TP + FN) * (TN + FP) * (TN + FN)) != 0 else 0
             org_score[organism] = [{'TP': TP}, {'FP': FP}, {'TN': TN}, {'FN': FN}, {'Precision': prec_org},
-                                   {'Recall': rec_org}, {'F-Score': f_score_org}, {'Accuracy': acc_org}]
+                                   {'Recall': rec_org}, {'F-Score': f_score_org}, {'Accuracy': acc_org}, {'MCC': mcc_org}]
 
             TTP += TP
             TFP += FP
@@ -65,7 +66,8 @@ class Evaluations:
             rec += rec_org
             f_score += f_score_org
             mcc += mcc_org
-        return [mcc, f_score, acc, prec, rec], [TTP, TFP, TFN, TTN]
+        print(org_score)
+        return [mcc, f_score, acc, prec, rec], [TTP, TFP, TFN, TTN], org_score
 
     def evaluations_test(self, total_orgs, models, gi_eval, organism_neg_dict):
         for key in models.keys():
@@ -93,18 +95,26 @@ class Evaluations:
             print("recall = ", rec)
 
     def evaluations_main_104(self, total_orgs, models, gi_eval, organism_neg_dict):
+        evaluation_result = []
         for key in models.keys():
             model = models[key]
             org_num = len(total_orgs)
             print("---------------")
             print(key)
-            result1, result2 = self.calculate_score(model, gi_eval, organism_neg_dict, total_orgs)
+            result1, result2, org_score = self.calculate_score(model, gi_eval, organism_neg_dict, total_orgs)
             print("---------------")
             print("mcc = ", result1[0] / org_num)
             print("f-score = ", result1[1] / org_num)
             print("accuracy = ", result1[2] / org_num)
             print("precision = ", result1[3] / org_num)
             print("recall = ", result1[4] / org_num)
+            evaluation_result.append(org_score)
+        self.result_download(evaluation_result)
+
+    def result_download(self, org_score):
+        with open("evaluation_result","wb") as fp:  # Pickling
+            pickle.dump(org_score, fp)
+
 
     def mergeIntervals(self, arr):
 

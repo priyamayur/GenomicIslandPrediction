@@ -263,6 +263,7 @@ class IdentifyGI:
             org_count += 1
             print("--- sequence " + str(org_count) + "---")
             print("approximate prediction time : 2-5 minutes")
+            #seq_id = ''.join(e for e in str(dna_sequence.id) if e.isalnum())
             seq_id = dna_sequence.id
             pre_process = PreprocessData()
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)

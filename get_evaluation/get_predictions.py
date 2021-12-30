@@ -1,6 +1,6 @@
 import sys
 import pandas as pd
-from treasureisland.dna_sequence import sequence
+from treasureisland.Predictor import Predictor
 
 
 def flatten_result(pred):
@@ -12,11 +12,11 @@ def flatten_result(pred):
 
 
 def main(seqfile):
-    seq = sequence(seqfile)
+    seq = Predictor(seqfile)
     pred = seq.predict()
     flat_pred = flatten_result(pred)
     df = pd.DataFrame(flat_pred, columns=['accession', 'start', 'end', 'probability'])
-    filename = 'result_104_8000_75_improved.xlsx'
+    filename = 'result_104_10000_85_50_gc.xlsx'
     pd.DataFrame(df).to_excel(filename)
 
 

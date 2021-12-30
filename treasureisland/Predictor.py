@@ -39,7 +39,8 @@ class Predictor:
 
 
     def __get_models(self):
-        read_classifier = resources.read_binary(models, "svm_upgrade_gensim_sklearn_1.0")
+        #read_classifier = resources.read_binary(models, "svm_upgrade_gensim_sklearn_1.0")
+        read_classifier = resources.read_binary(models, "svm_genome_centric")
         classifier = pickle.loads(read_classifier)
 
         read_emb_model = resources.read_binary(models, "doc2vec_upgrade_gensim")
@@ -69,19 +70,22 @@ class Predictor:
     def predictions_to_excel(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = self.output_file_path + "/" + org + '.xlsx'
+            org_name = ''.join(e for e in str(org) if e.isalnum())
+            filename = self.output_file_path + "/" + org_name + '.xlsx'
             pd.DataFrame(df).to_excel(filename)
 
 
     def predictions_to_csv(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = self.output_file_path + "/" +org + '.csv'
+            org_name = ''.join(e for e in str(org) if e.isalnum())
+            filename = self.output_file_path + "/" + str(org_name) + '.csv'
             pd.DataFrame(df).to_csv(filename)
 
 
     def predictions_to_text(self, predictions):
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
-            filename = self.output_file_path + "/" + org + '.txt'
+            org_name = ''.join(e for e in str(org) if e.isalnum())
+            filename = self.output_file_path + "/" + org_name + '.txt'
             pd.DataFrame(df).to_csv(filename, header=None, index=None, sep=' ', mode='w')

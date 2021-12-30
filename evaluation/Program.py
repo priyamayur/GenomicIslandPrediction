@@ -62,8 +62,9 @@ class Program:
         organism_pos_dict, organism_neg_dict, organism_pos_test_dict, organism_neg_test_dict, organism_lit_dict, model_dict = self.get_dictionary()
 
         print("evaluation of complete 104 organism")
-        #eval.evaluations_main_104(model_dict['treasureisland_dict'].keys(), model_dict, organism_pos_dict, organism_neg_dict)
-        eval.evaluations_main_104(organism_pos_dict.keys(), model_dict, organism_pos_dict, organism_neg_dict)
+        print(model_dict['treasureisland_dict'].keys())
+        eval.evaluations_main_104(model_dict['treasureisland_dict'].keys(), model_dict, organism_pos_dict, organism_neg_dict)
+        #eval.evaluations_main_104(organism_pos_dict.keys(), model_dict, organism_pos_dict, organism_neg_dict)
         # ---------------------------------------------------------------------------------------
         all_predictor = [model_dict['islandpath_dimob_dict'], model_dict['sigi_hmm_dict'],
                          model_dict['islandpick_dict'], model_dict['islander_dict'], model_dict['alien_hunter_dict'],
@@ -85,9 +86,12 @@ class Program:
         # ---------------------------------------------------------------------------------------
         print("evaluation of test data")
         pos_orgs = set(organism_pos_test_dict.keys())
+        print(len(pos_orgs))
         neg_orgs = set(organism_neg_test_dict.keys())
         total_orgs = pos_orgs.union(neg_orgs)
-        eval.evaluations_test(total_orgs, model_dict, organism_pos_test_dict, organism_neg_test_dict)
+        eval.evaluations_main_104(pos_orgs, model_dict, organism_pos_test_dict, organism_neg_test_dict)
+        #eval.evaluations_test(total_orgs, model_dict, organism_pos_test_dict, organism_neg_test_dict)
+
 
     @staticmethod
     def get_reference_data():
@@ -97,9 +101,11 @@ class Program:
         neg_data_table = pd.read_excel(read_negative)
         read_positive = resources.read_binary(reference_data, "GI_positive_set_table.xlsx")
         pos_data_table = pd.read_excel(read_positive)
-        read_negative_test = resources.read_binary(reference_data, "negative_test_table.xlsx")
+        #read_negative_test = resources.read_binary(reference_data, "negative_test_table.xlsx")
+        read_negative_test = resources.read_binary(reference_data, "negative_test_table_gc.xlsx")
         neg_test_data_table = pd.read_excel(read_negative_test)
-        read_positive_test = resources.read_binary(reference_data, "positive_test_table.xlsx")
+        #read_positive_test = resources.read_binary(reference_data, "positive_test_table.xlsx")
+        read_positive_test = resources.read_binary(reference_data, "positive_test_table_gc.xlsx")
         pos_test_data_table = pd.read_excel(read_positive_test)
 
         return literature_pos_data_table, neg_data_table, pos_data_table, neg_test_data_table, pos_test_data_table
