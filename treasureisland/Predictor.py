@@ -6,17 +6,22 @@ import os
 from . import models
 from importlib import resources
 import time
-
+from treasureisland.Parameters import Parameters
 
 class Predictor:
 
     def __init__(self, input_file_path, output_file_path="output"):
         self.input_file_path = input_file_path
         self.output_file_path = output_file_path
+        self.parameters = Parameters()
 
     def __format_input(self, input):
         sequences = list(SeqIO.parse(input, "fasta"))
         return sequences
+
+    def change_thresholds(self, upper_threshold, lower_threshold):
+        self.parameters.set_upper_threshold(upper_threshold)
+        self.parameters.set_lower_threshold(lower_threshold)
 
     def __process_output(self, output):
         current_directory = os.getcwd()
@@ -58,7 +63,8 @@ class Predictor:
         print("--- start predicting ---")
         dna_sequence = self.__format_input(self.input_file_path)
         dna_emb_model, classifier = self.__get_models()
-        genome = IdentifyGI(dna_sequence, dna_emb_model, classifier)
+
+        genome = IdentifyGI(dna_sequence, dna_emb_model, classifier, self.parameters)
         fine_tuned_pred = genome.find_gi_predictions()
 
         output = self.__process_output(fine_tuned_pred)

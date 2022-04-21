@@ -1,6 +1,7 @@
 import sys
 import pandas as pd
 from treasureisland.Predictor import Predictor
+from Bio import SeqIO
 
 
 def flatten_result(pred):
@@ -13,11 +14,18 @@ def flatten_result(pred):
 
 def main(seqfile):
     seq = Predictor(seqfile)
-    pred = seq.predict()
-    flat_pred = flatten_result(pred)
-    df = pd.DataFrame(flat_pred, columns=['accession', 'start', 'end', 'probability'])
-    filename = 'result_104_10000_85_50_gc.xlsx'
-    pd.DataFrame(df).to_excel(filename)
+    #sequences = list(SeqIO.parse(seqfile, "fasta"))
+    #for s in sequences:
+    #    print(s.id)
+    upper = 0.90
+    lowers = [0.60, 0.70, 0.80, 0.90]
+    for lower in lowers:
+        seq.change_thresholds(upper,lower)
+        pred = seq.predict()
+        flat_pred = flatten_result(pred)
+        df = pd.DataFrame(flat_pred, columns=['accession', 'start', 'end', 'probability'])
+        filename = 'result_20_10000_' + upper + '-' + lower + '_revise_paper_gc.xlsx'
+        pd.DataFrame(df).to_excel(filename)
 
 
 if __name__ == '__main__':

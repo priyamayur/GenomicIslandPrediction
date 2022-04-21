@@ -94,7 +94,7 @@ class Evaluations:
             print("precision = ", prec)
             print("recall = ", rec)
 
-    def evaluations_main_104(self, total_orgs, models, gi_eval, organism_neg_dict):
+    def evaluations_main_104(self, total_orgs, models, gi_eval, organism_neg_dict, result_type):
         evaluation_result = []
         for key in models.keys():
             model = models[key]
@@ -109,10 +109,10 @@ class Evaluations:
             print("precision = ", result1[3] / org_num)
             print("recall = ", result1[4] / org_num)
             evaluation_result.append(org_score)
-        self.result_download(evaluation_result)
+        self.result_download(evaluation_result, result_type)
 
-    def result_download(self, org_score):
-        with open("evaluation_result","wb") as fp:  # Pickling
+    def result_download(self, org_score, result_type):
+        with open("evaluation_result" + str(result_type),"wb") as fp:  # Pickling
             pickle.dump(org_score, fp)
 
 

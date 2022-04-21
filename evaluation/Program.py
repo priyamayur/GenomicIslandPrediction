@@ -63,7 +63,7 @@ class Program:
 
         print("evaluation of complete 104 organism")
         print(model_dict['treasureisland_dict'].keys())
-        eval.evaluations_main_104(model_dict['treasureisland_dict'].keys(), model_dict, organism_pos_dict, organism_neg_dict)
+        eval.evaluations_main_104(model_dict['treasureisland_dict'].keys(), model_dict, organism_pos_dict, organism_neg_dict, "complete")
         #eval.evaluations_main_104(organism_pos_dict.keys(), model_dict, organism_pos_dict, organism_neg_dict)
         # ---------------------------------------------------------------------------------------
         all_predictor = [model_dict['islandpath_dimob_dict'], model_dict['sigi_hmm_dict'],
@@ -82,14 +82,14 @@ class Program:
             print(eval.calculate_novel_104(reference_list, predictor, organism_list))
         # ---------------------------------------------------------------------------------------
         print("evaluation of literature data")
-        eval.evaluations_main_104(organism_lit_dict.keys(), model_dict, organism_lit_dict, organism_neg_dict)
+        eval.evaluations_main_104(organism_lit_dict.keys(), model_dict, organism_lit_dict, organism_neg_dict, "literature")
         # ---------------------------------------------------------------------------------------
         print("evaluation of test data")
         pos_orgs = set(organism_pos_test_dict.keys())
         print(len(pos_orgs))
         neg_orgs = set(organism_neg_test_dict.keys())
         total_orgs = pos_orgs.union(neg_orgs)
-        eval.evaluations_main_104(pos_orgs, model_dict, organism_pos_test_dict, organism_neg_test_dict)
+        eval.evaluations_main_104(pos_orgs, model_dict, organism_pos_test_dict, organism_neg_test_dict, "test")
         #eval.evaluations_test(total_orgs, model_dict, organism_pos_test_dict, organism_neg_test_dict)
 
 

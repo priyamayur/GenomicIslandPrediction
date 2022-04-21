@@ -1,17 +1,16 @@
-from . import Parameters
-
-
 class PreprocessData:
 
-    @staticmethod
-    def generate_kmers(segment):
+    def __init__(self,parameters):
+        self.parameters = parameters
+
+    def generate_kmers(self, segment):
         ''' Generate overlapping kmers from a given DNA sequence
            segment : DNA sequence
         '''
         kmers = []
-        for i in range(0, len(segment) - (Parameters.KMER_SIZE - 1)):
+        for i in range(0, len(segment) - (self.parameters.KMER_SIZE - 1)):
             start = i
-            end = i + Parameters.KMER_SIZE
+            end = i + self.parameters.KMER_SIZE
             kmer = segment[start:end]
             kmers.append(kmer)
 
@@ -26,10 +25,10 @@ class PreprocessData:
         processed_dna_seq = []
         segment_borders = []
 
-        for i in range(0, len(sequence), Parameters.WINDOW_SIZE):
+        for i in range(0, len(sequence), self.parameters.WINDOW_SIZE):
             start = i
-            if (i + Parameters.WINDOW_SIZE) < len(sequence):
-                end = i + Parameters.WINDOW_SIZE
+            if (i + self.parameters.WINDOW_SIZE) < len(sequence):
+                end = i + self.parameters.WINDOW_SIZE
             else:
                 end = len(sequence)
             segment = sequence[start:end]

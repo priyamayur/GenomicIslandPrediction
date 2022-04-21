@@ -2,18 +2,18 @@ import pandas as pd
 import numpy as np
 from copy import copy
 from Bio.Seq import Seq
-from . import Parameters
 from treasureisland.PreprocessData import PreprocessData
 
 
 class IdentifyGI:
 
-    def __init__(self, dna_sequence_list, dna_emb_model, classifier):
+    def __init__(self, dna_sequence_list, dna_emb_model, classifier, parameters):
         '''Initialize variables'''
 
         self.dna_sequence_list = dna_sequence_list
         self.dna_emb_model = dna_emb_model
         self.classifier = classifier
+        self.parameters = parameters
 
     def get_dna_vectors(self, processed_dna_seq):
         '''Uses the DNA embedding model to get the DNA vector of a DNA segment
@@ -52,7 +52,7 @@ class IdentifyGI:
         prev_gi = False
         for row in dna_prob:
             found_gi = False
-            if row[3] >= Parameters.UPPER_THRESHOLD:
+            if row[3] >= self.parameters.UPPER_THRESHOLD:
                 found_gi = True
                 if 'gi_' + str(gi_num) in gi_dict.keys():
                     gi_dict['gi_' + str(gi_num)].append(row)
@@ -60,14 +60,14 @@ class IdentifyGI:
                     if prev == -1:
                         gi_dict['gi_' + str(gi_num)] = [row]
                     else:
-                        if prev[3] > Parameters.LOWER_THRESHOLD:
+                        if prev[3] > self.parameters.LOWER_THRESHOLD:
                             gi_dict['gi_' + str(gi_num)] = [prev]
                             gi_dict['gi_' + str(gi_num)].append(row)
                         else:
                             gi_dict['gi_' + str(gi_num)] = [row]
                 prev_gi = True
             if found_gi == False and prev_gi == True:
-                if row[3] > Parameters.LOWER_THRESHOLD:
+                if row[3] > self.parameters.LOWER_THRESHOLD:
                     gi_dict['gi_' + str(gi_num)].append(row)
                 prev_gi = False
                 gi_num += 1
@@ -85,7 +85,7 @@ class IdentifyGI:
 
         sequence = str(dna_sequence.seq).lower()
         fragment = sequence[gi_start:gi_end]
-        pre_process = PreprocessData()
+        pre_process = PreprocessData(self.parameters)
         kmers = pre_process.generate_kmers(fragment)
 
         inferred_vector = [self.dna_emb_model.infer_vector(kmers, epochs=20)]
@@ -112,7 +112,7 @@ class IdentifyGI:
             count = 0
             for segment in gi_region:
                 if count == 0: # for the first segment in the GEI region
-                    if segment[3] < Parameters.UPPER_THRESHOLD: # it is a flanking sequence
+                    if segment[3] < self.parameters.UPPER_THRESHOLD: # it is a flanking sequence
                         flanking_start = [segment[0], segment[1]]
                         merged_start = gi_region[1][0]
                         count += 1
@@ -120,12 +120,12 @@ class IdentifyGI:
                     else: # not a flanking sequence
                         merged_start = gi_region[0][0]
                 else: # for every segment apart from first segment
-                    if segment[3] < Parameters.UPPER_THRESHOLD: # check for flanking sequence at the end
+                    if segment[3] < self.parameters.UPPER_THRESHOLD: # check for flanking sequence at the end
                         flanking_end = [segment[0], segment[1]]
                         break
                 # incrementally find prob of merged regions
                 merged_prob = self.find_fragment_probability([merged_start, segment[1]], dna_sequence)
-                if merged_prob >= Parameters.UPPER_THRESHOLD: # if merged region is a GEI
+                if merged_prob >= self.parameters.UPPER_THRESHOLD: # if merged region is a GEI
                     merged_end = segment[1]
                     merged_probs.append(merged_prob)
                 else:  # merged region not a GEI, then save previous GEI region
@@ -156,12 +156,12 @@ class IdentifyGI:
         '''
 
         if mergedGEI.flanking_start != 0:
-            start_limit = mergedGEI.start - (Parameters.WINDOW_SIZE / 2)
+            start_limit = mergedGEI.start - (self.parameters.WINDOW_SIZE / 2)
         else:
             start_limit = mergedGEI.start
 
         if mergedGEI.flanking_end != 0:
-            end_limit = mergedGEI.end + (Parameters.WINDOW_SIZE / 2)
+            end_limit = mergedGEI.end + (self.parameters.WINDOW_SIZE / 2)
         else:
             end_limit = mergedGEI.end
 
@@ -223,16 +223,16 @@ class IdentifyGI:
             direction_right = border_side_r * -1
             while_clause = next_obj.prob > current_obj.prob
 
-        while(next_obj.prob >= Parameters.UPPER_THRESHOLD and
+        while(next_obj.prob >= self.parameters.UPPER_THRESHOLD and
               next_obj.start >= preFineTunedGEI.start_limit and
               next_obj.end <= preFineTunedGEI.end_limit and
-              (next_obj.end - next_obj.start) >= Parameters.MINIMUM_GI_SIZE and
+              (next_obj.end - next_obj.start) >= self.parameters.MINIMUM_GI_SIZE and
               while_clause
         ):
 
             current_obj = copy(next_obj)
-            next_obj.start = next_obj.start + (Parameters.TUNE_METRIC * direction_left)
-            next_obj.end = next_obj.end + Parameters.TUNE_METRIC * direction_right
+            next_obj.start = next_obj.start + (self.parameters.TUNE_METRIC * direction_left)
+            next_obj.end = next_obj.end + self.parameters.TUNE_METRIC * direction_right
             frag_prob = self.find_fragment_probability([next_obj.start, next_obj.end], dna_sequence)
             next_obj = FineTunedGEI(preFineTunedGEI.name, next_obj.start, next_obj.end, frag_prob)
         return current_obj
@@ -258,14 +258,13 @@ class IdentifyGI:
         '''
         all_gi_borders = []
         org_count = 0
-
         for dna_sequence in self.dna_sequence_list:
             org_count += 1
             print("--- sequence " + str(org_count) + "---")
             print("approximate prediction time : 2-5 minutes")
             #seq_id = ''.join(e for e in str(dna_sequence.id) if e.isalnum())
             seq_id = dna_sequence.id
-            pre_process = PreprocessData()
+            pre_process = PreprocessData(self.parameters)
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
             dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders)
