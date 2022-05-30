@@ -3,8 +3,8 @@ class Parameters:
         '''Intitialize parameters'''
         self.WINDOW_SIZE = 10000
         self.KMER_SIZE = 6
-        self.UPPER_THRESHOLD = 0.90
-        self.LOWER_THRESHOLD = 0.60
+        self.UPPER_THRESHOLD = 0.80
+        self.LOWER_THRESHOLD = 0.50
         self.TUNE_METRIC = 1000
         self.MINIMUM_GI_SIZE = 10000
 

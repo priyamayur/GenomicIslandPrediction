@@ -19,9 +19,8 @@ class Predictor:
         sequences = list(SeqIO.parse(input, "fasta"))
         return sequences
 
-    def change_thresholds(self, upper_threshold, lower_threshold):
+    def change_upper_threshold(self, upper_threshold):
         self.parameters.set_upper_threshold(upper_threshold)
-        self.parameters.set_lower_threshold(lower_threshold)
 
     def __process_output(self, output):
         current_directory = os.getcwd()
