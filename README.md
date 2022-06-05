@@ -29,7 +29,7 @@ TreasureIsland can be installed by python package management system "pip" :
 ### Option1 - Run TreasureIsland directly from commandline  :
 Run TreasureIsland from commandline on your DNA fasta file (example DNA files provided [here](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/genome)), output is given in csv format:
 
-    treasureisland mypath/<DNA file>.fasta [-o <output_file_path>]     
+    treasureisland mypath/<DNA file>.fasta [-o <output_file_path>] [-ut <upper threshold value>] 
     
 ### Option2 - Run TreasureIsland from python :
 The TreasureIsland package is used to find genomic island predictions which can be downloaded in csv, xlsx, txt file formats demonstrated in [TreasureIsland package](#Running-TreasureIsland-package-from-python)
@@ -51,6 +51,16 @@ The results are shown in the following format for each genomic island:
 <sequenceID> <start> <end> <probability of GEI>
 
 example : NC_002620.2 1.0 130000.0 0.95597
+
+### Upper Threshold:
+
+User also has the ability to change the upper threshold value to change the precision and recall tradeoff. 
+upper threshold is set to 0.80 by default.
+
+example : 
+
+treasureisland ecoli.fasta -o gei_output -ut 0.95
+Setting the upper threshold to 0.95 would increase the precision and decrease the recall performance.
     
 ### Testing:
     
@@ -59,7 +69,7 @@ Note : github downloads fasta file in txt format (filename.fasta.txt).
     
 example :
     
-    treasureisland ecoli.fasta -o gei_output   
+    treasureisland ecoli.fasta -o gei_output -ut 0.95 
 
 
 ### Running TreasureIsland package from python:
@@ -69,9 +79,13 @@ import the Predictor class from treasureisland package:
     from treasureisland.Predictor import Predictor
 
 Instantiate the sequence with the DNA sequence file path as the argument. 
-The DNA file used can be a fasta or genbank file.
+The DNA file used can be a fasta file.
 
     seq = Predictor("<Path to DNA fasta file>/ecoli.fasta", "<output_file_path>") 
+
+Optionally, change the upper threshold value.
+
+    seq.change_upper_threshold(0.9)
 
 Get prediction data frame from sequence by running the predict method.
 

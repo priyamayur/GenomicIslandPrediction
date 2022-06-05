@@ -19,7 +19,9 @@ class Predictor:
         sequences = list(SeqIO.parse(input, "fasta"))
         return sequences
 
-    def change_upper_threshold(self, upper_threshold):
+    def change_upper_threshold(self, upper_threshold = 0.8):
+        if (upper_threshold < 0.5):
+            raise Exception("upper threshold cannot be lesser than 0.5")
         self.parameters.set_upper_threshold(upper_threshold)
 
     def __process_output(self, output):
@@ -43,7 +45,6 @@ class Predictor:
 
 
     def __get_models(self):
-        #read_classifier = resources.read_binary(models, "svm_upgrade_gensim_sklearn_1.0")
         read_classifier = resources.read_binary(models, "svm_genome_centric")
         classifier = pickle.loads(read_classifier)
 
