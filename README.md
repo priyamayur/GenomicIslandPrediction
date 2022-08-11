@@ -2,16 +2,16 @@
 
 TreasureIsland python package is a machine learning-based Genomic Island prediction software, that uses an unsupervised representation of DNA for its prediction.
 
-TreasureIsland was constructed from [Benbow dataset](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/Benbow). 
+TreasureIsland is constructed from the [Benbow dataset](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/Benbow). 
 
-## Dependency :
+## Dependencies :
 
 Python >= 3.7
 
 ## Installation:
 
-### Option1 - Use pip to install the package :
-TreasureIsland can be installed by python package management system "pip" :
+### Option1 - Use pip:
+
 
     python -m pip install treasureisland
     
@@ -57,14 +57,14 @@ example : NC_002620.2 1.0 130000.0 0.95597
 User also has the ability to change the upper threshold value to change the precision and recall tradeoff. 
 upper threshold is set to 0.80 by default.
 
-example : 
+Example : 
 
 treasureisland ecoli.fasta -o gei_output -ut 0.95
 Setting the upper threshold to 0.95 would increase the precision and decrease the recall performance.
     
 ### Testing:
     
-Repository contains some [sample DNA files](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/genome) that can be downloaded to test the TreasureIsland. 
+A repository containing some [sample DNA files](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/genome) that can be downloaded to test TreasureIsland. 
 Note : github downloads fasta file in txt format (filename.fasta.txt). 
     
 example :
