@@ -1,10 +1,15 @@
+from gensim.models import Doc2Vec
+
 from treasureisland.IdentifyGI import IdentifyGI
 import pickle
 import pandas as pd
 from Bio import SeqIO
 import os
 from . import models
+from importlib_resources import files, as_file
 from importlib import resources
+from gensim.test.utils import get_tmpfile
+from pkg_resources import resource_string as resource_bytes
 import time
 from treasureisland.Parameters import Parameters
 
@@ -14,6 +19,7 @@ class Predictor:
         self.input_file_path = input_file_path
         self.output_file_path = output_file_path
         self.parameters = Parameters()
+        self.out_of_distribution = []
 
     def __format_input(self, input):
         sequences = list(SeqIO.parse(input, "fasta"))
@@ -45,11 +51,11 @@ class Predictor:
 
 
     def __get_models(self):
-        read_classifier = resources.read_binary(models, "svm_genome_centric")
+        read_classifier = resources.read_binary(models, "svm_v2_bacillota")
         classifier = pickle.loads(read_classifier)
 
-        read_emb_model = resources.read_binary(models, "doc2vec_upgrade_gensim")
-        dna_emb_model = pickle.loads(read_emb_model)
+        source = files(models).joinpath('embedding_v2_bacillota')
+        dna_emb_model = Doc2Vec.load(get_tmpfile(source))
 
         return dna_emb_model, classifier
 
@@ -65,7 +71,7 @@ class Predictor:
         dna_emb_model, classifier = self.__get_models()
 
         genome = IdentifyGI(dna_sequence, dna_emb_model, classifier, self.parameters)
-        fine_tuned_pred = genome.find_gi_predictions()
+        fine_tuned_pred, self.out_of_distribution = genome.find_gi_predictions()
 
         output = self.__process_output(fine_tuned_pred)
         print("--- finished predicting ---")
@@ -74,24 +80,36 @@ class Predictor:
 
 
     def predictions_to_excel(self, predictions):
+        count = 0
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
             org_name = ''.join(e for e in str(org) if e.isalnum())
+            if self.out_of_distribution[count]:
+                org_name = org_name + '_out_of_distribution_data'
             filename = self.output_file_path + "/" + org_name + '.xlsx'
             pd.DataFrame(df).to_excel(filename)
+            count += 1
 
 
     def predictions_to_csv(self, predictions):
+        count = 0
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
             org_name = ''.join(e for e in str(org) if e.isalnum())
+            if self.out_of_distribution[count]:
+                org_name = org_name + '_out_of_distribution_data'
             filename = self.output_file_path + "/" + str(org_name) + '.csv'
             pd.DataFrame(df).to_csv(filename)
+            count += 1
 
 
     def predictions_to_text(self, predictions):
+        count = 0
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
             org_name = ''.join(e for e in str(org) if e.isalnum())
+            if self.out_of_distribution[count]:
+                org_name = org_name + '_out_of_distribution_data'
             filename = self.output_file_path + "/" + org_name + '.txt'
             pd.DataFrame(df).to_csv(filename, header=None, index=None, sep=' ', mode='w')
+            count += 1

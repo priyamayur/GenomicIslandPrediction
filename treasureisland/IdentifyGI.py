@@ -14,6 +14,7 @@ class IdentifyGI:
         self.dna_emb_model = dna_emb_model
         self.classifier = classifier
         self.parameters = parameters
+        self.out_of_distribution = False
 
     def get_dna_vectors(self, processed_dna_seq):
         '''Uses the DNA embedding model to get the DNA vector of a DNA segment
@@ -36,6 +37,16 @@ class IdentifyGI:
 
         probability = self.classifier.predict_proba(dna_vectors)
         prob_df = pd.DataFrame(np.column_stack([segment_borders, probability]), columns=['start', 'end', '0', '1'])
+        gei_class_column = list(prob_df['1'])
+        count_of_seg = len(gei_class_column)
+        gei_segments = [x for x in gei_class_column if x > self.parameters.LOWER_THRESHOLD]
+        distribution_threshold = 0.85
+        pos_ratio = len(gei_segments)/count_of_seg
+        if pos_ratio > distribution_threshold:
+            print("data out of distribution for this prediction")
+            self.out_of_distribution = True
+        else:
+            self.out_of_distribution = False
         prob_list = prob_df.values.tolist()
 
         return prob_list
@@ -257,13 +268,15 @@ class IdentifyGI:
         Main function to call all other functions for identifying GI regions
         '''
         all_gi_borders = []
+        all_out_of_distribution = []
         org_count = 0
         for dna_sequence in self.dna_sequence_list:
             org_count += 1
             print("--- sequence " + str(org_count) + "---")
-            print("approximate prediction time : 2-5 minutes")
             #seq_id = ''.join(e for e in str(dna_sequence.id) if e.isalnum())
             seq_id = dna_sequence.id
+            print(seq_id)
+            print("approximate prediction time : 2-5 minutes")
             pre_process = PreprocessData(self.parameters)
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
@@ -271,8 +284,9 @@ class IdentifyGI:
             gi_regions = self.get_GI_regions(dna_prob)
             gi_borders = self.find_GI_borders(gi_regions, seq_id, dna_sequence)
             all_gi_borders.append(gi_borders)
+            all_out_of_distribution.append(self.out_of_distribution)
 
-        return all_gi_borders
+        return all_gi_borders, all_out_of_distribution
 
 
 class MergedGEI:
