@@ -18,7 +18,8 @@ class IdentifyGI:
 
     def get_dna_vectors(self, processed_dna_seq):
         '''Uses the DNA embedding model to get the DNA vector of a DNA segment
-           processed_dna_seq : DNA segment after preprocessing step
+           :param processed_dna_seq : DNA segment after preprocessing step
+           :return dna_vectors : DNA vectors
         '''
 
         dna_vectors = []
@@ -29,10 +30,11 @@ class IdentifyGI:
         return dna_vectors
 
     def get_dna_segment_probability(self, dna_vectors, segment_borders):
-        ''' 
+        '''
         Gets the probability of each DNA segment to be a GI using the classifier
-        dna_vectors : DNA vectors 
-        segment_borders : start and end points of DNA segments  
+        :param dna_vectors : DNA vectors
+        :param segment_borders : start and end points of DNA segments
+        :return : prob_list : list of DNA segments and their class probabilities
         '''
 
         probability = self.classifier.predict_proba(dna_vectors)
@@ -52,10 +54,11 @@ class IdentifyGI:
         return prob_list
 
     def get_GI_regions(self, dna_prob):
-        ''' 
-        Gets the DNA segments with probability above the upper threshold and 
-        flanking sequences with probability between upper and lower thesholds 
-        dna_prob : full list of DNA segments and their probabilities
+        '''
+        Gets the DNA segments with probability above the upper threshold and
+        flanking sequences with probability between upper and lower thesholds
+        :param dna_prob : full list of DNA segments and their probabilities
+        :return : gi_dict : dictionary with GEI regions and their flanking segments
         '''
         prev = -1
         gi_dict = {}
@@ -89,7 +92,9 @@ class IdentifyGI:
     def find_fragment_probability(self, GI_borders, dna_sequence):
         '''
         Get a DNA fragment probability for class GI
-        GI_borders : set of start and end points
+        :param GI_borders : set of start and end points
+        :param dna_sequence : dna sequence with id
+        :return gi_prob : class GEI probability for a segment
         '''
         gi_start = int(GI_borders[0])
         gi_end = int(GI_borders[1])
@@ -161,9 +166,9 @@ class IdentifyGI:
 
     def pre_fine_tune(self, mergedGEI):
         '''
-
-        :param mergedGEI:
-        :return: preFinedTuneGEI
+        Convert a merged GEI object to a pre fine-tuned object with the start and end limits
+        :param mergedGEI: merged GEI regions
+        :return: preFinedTuneGEI : pre fine-tuned GEI regions
         '''
 
         if mergedGEI.flanking_start != 0:
@@ -182,9 +187,9 @@ class IdentifyGI:
 
     def fine_tune(self, preFineTunedGEI, dna_sequence):
         '''
-
-        :param preFineTunedGEI:
-        :return: fineTunedGEI
+        Convert a preFineTunedGEI GEI object to a fineTunedGEI object with the start and end points
+        :param preFineTunedGEI: pre fine-tuned GEI
+        :return: fineTunedGEI : fine-tuned GEI
         '''
 
         #left border
@@ -217,8 +222,8 @@ class IdentifyGI:
 
     def fine_tune_helper(self, border_side_l, border_side_r, has_flanking_segment, preFineTunedGEI, dna_sequence):
         '''
-
-        :return:
+        Fine tunes each GEI border
+        :return: current_obj : fineTunedGEI
         '''
 
         current_obj = next_obj = FineTunedGEI(preFineTunedGEI.name, preFineTunedGEI.start, preFineTunedGEI.end,
@@ -249,9 +254,12 @@ class IdentifyGI:
         return current_obj
 
     def find_GI_borders(self, gi_regions, id, dna_sequence):
-        ''' 
+        '''
         Function to combine all the GI border finding steps
-        gi_regions : GI fragments along with its flanking sequence
+        :parameter gi_regions : GI fragments along with its flanking sequence
+        :parameter id : DNA sequence ID
+        :parameter dna_sequence : dna sequence
+        :return gi_borders : dictionary with border predictions for dna_sequence
         '''
 
         gi_borders = {}
@@ -264,8 +272,10 @@ class IdentifyGI:
         return gi_borders
 
     def find_gi_predictions(self):
-        ''' 
+        '''
         Main function to call all other functions for identifying GI regions
+        :return all_gi_borders : GEI borders predictions for all input sequences
+        :return : out_of_distribution : list of booleans for all input sequences indicating if sequence is out of distribution
         '''
         all_gi_borders = []
         all_out_of_distribution = []

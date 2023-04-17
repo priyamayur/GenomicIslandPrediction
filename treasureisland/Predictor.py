@@ -25,7 +25,10 @@ class Predictor:
         sequences = list(SeqIO.parse(input, "fasta"))
         return sequences
 
-    def change_upper_threshold(self, upper_threshold = 0.8):
+    def change_upper_threshold(self, upper_threshold = 0.85):
+        '''
+        Sets the upper threshold to a user-defined value
+        '''
         if (upper_threshold < 0.5):
             raise Exception("upper threshold cannot be lesser than 0.5")
         self.parameters.set_upper_threshold(upper_threshold)
@@ -62,6 +65,7 @@ class Predictor:
 
     def predict(self):
         '''
+        Main function that predicts all input GEI sequences
         :return: dictionary of genomic island predictions
         '''
 
