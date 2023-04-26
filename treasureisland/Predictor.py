@@ -9,7 +9,6 @@ from . import models
 from importlib_resources import files, as_file
 from importlib import resources
 from gensim.test.utils import get_tmpfile
-from pkg_resources import resource_string as resource_bytes
 import time
 from treasureisland.Parameters import Parameters
 
