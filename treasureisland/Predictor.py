@@ -24,7 +24,7 @@ class Predictor:
         sequences = list(SeqIO.parse(input, "fasta"))
         return sequences
 
-    def change_upper_threshold(self, upper_threshold = 0.85):
+    def change_upper_threshold(self, upper_threshold = 0.80):
         '''
         Sets the upper threshold to a user-defined value
         '''
@@ -53,10 +53,10 @@ class Predictor:
 
 
     def __get_models(self):
-        read_classifier = resources.read_binary(models, "svm_v2_bacillota")
+        read_classifier = resources.read_binary(models, "svm_embedding_v3_short_vector")
         classifier = pickle.loads(read_classifier)
 
-        source = files(models).joinpath('embedding_v2_bacillota')
+        source = files(models).joinpath('embedding_v3')
         dna_emb_model = Doc2Vec.load(get_tmpfile(source))
 
         return dna_emb_model, classifier

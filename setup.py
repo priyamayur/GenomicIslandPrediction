@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="treasureisland",                     # This is the name of the package
-    version="1.1.0",                        # The initial release version
+    version="1.1.2",                        # The initial release version
     author="Priyanka Banerjee",
     author_email="banerjee.p1104@gmail.com",                     # Full name of the author
     description="Prediction of Genomic Islands",
@@ -25,11 +25,12 @@ setuptools.setup(
     },
     include_package_data=True,
     install_requires=[
-        'gensim>=4.3.1',
-        'biopython>=1.79',        
-        'scikit-learn==1.0.1',
+        'gensim>=4.3.2',
+        'biopython>=1.79',
+        'scikit-learn>=1.4.0',
         'pandas',
         'openpyxl',
-        'importlib-resources'
+        'importlib-resources',
+        'numpy>=1.26.3'
    ]
 )
