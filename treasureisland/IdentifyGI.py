@@ -25,11 +25,16 @@ class IdentifyGI:
         dna_vectors = []
         for segments in processed_dna_seq:
             inferred_vector = self.dna_emb_model.infer_vector(segments, epochs=20)
+            if self.out_of_distribution:
+                sims = self.dna_emb_model.dv.most_similar(inferred_vector)
+                most_sim_tag = sims[0][0]
+                inferred_vector = self.dna_emb_model[most_sim_tag]
             dna_vectors.append(inferred_vector)
+
 
         return dna_vectors
 
-    def get_dna_segment_probability(self, dna_vectors, segment_borders):
+    def get_dna_segment_probability(self, dna_vectors, segment_borders, processed_dna_seq):
         '''
         Gets the probability of each DNA segment to be a GI using the classifier
         :param dna_vectors : DNA vectors
@@ -45,8 +50,18 @@ class IdentifyGI:
         distribution_threshold = 0.85
         pos_ratio = len(gei_segments)/count_of_seg
         if pos_ratio > distribution_threshold:
-            print("data out of distribution for this prediction")
             self.out_of_distribution = True
+            dna_vectors = self.get_dna_vectors(processed_dna_seq)
+            probability = self.classifier.predict_proba(dna_vectors)
+            prob_df = pd.DataFrame(np.column_stack([segment_borders, probability]), columns=['start', 'end', '0', '1'])
+            gei_class_column = list(prob_df['1'])
+            count_of_seg = len(gei_class_column)
+            gei_segments = [x for x in gei_class_column if x > self.parameters.LOWER_THRESHOLD]
+            pos_ratio = len(gei_segments)/count_of_seg
+            self.out_of_distribution = False
+            if pos_ratio > distribution_threshold:
+                self.out_of_distribution = True
+                print("data out of distribution for this prediction")
         else:
             self.out_of_distribution = False
         prob_list = prob_df.values.tolist()
@@ -105,6 +120,11 @@ class IdentifyGI:
         kmers = pre_process.generate_kmers(fragment)
 
         inferred_vector = [self.dna_emb_model.infer_vector(kmers, epochs=20)]
+        if self.out_of_distribution:
+            sims = self.dna_emb_model.dv.most_similar(inferred_vector)
+            most_sim_tag = sims[0][0]
+            inferred_vector = [self.dna_emb_model[most_sim_tag]]
+
         prob = self.classifier.predict_proba(inferred_vector)
 
         gi_prob = round(prob[0][1], 5)  # gi_prob probability of region belonging to class 1(GI)
@@ -290,7 +310,7 @@ class IdentifyGI:
             pre_process = PreprocessData(self.parameters)
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
-            dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders)
+            dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders, processed_dna_seq)
             gi_regions = self.get_GI_regions(dna_prob)
             gi_borders = self.find_GI_borders(gi_regions, seq_id, dna_sequence)
             all_gi_borders.append(gi_borders)
