@@ -7,21 +7,25 @@ TreasureIsland is constructed from the [Benbow dataset](https://github.com/priya
 ## Dependencies :
 
 Python >= 3.7
+Tested on Linux, mac machine
+For mac, make sure to run:  python3 -m ensurepip --upgrade
 
 ## Installation:
 
+    python3 -m venv venv
+    source venv/bin/activate
+
 ### Option1 - Use pip:
 
-
-    python -m pip install treasureisland
+    python3 -m pip install treasureisland
     
  if treasureisland is already installed :
  
-    python -m pip install treasureisland --upgrade
+    python3 -m pip install treasureisland --upgrade
 
 ### Option2 - Locally install package:
     git clone https://github.com/priyamayur/GenomicIslandPrediction.git
-    python -m pip install -e GenomicIslandPrediction
+    python3 -m pip install -e GenomicIslandPrediction
     
     
 ## Usage:
