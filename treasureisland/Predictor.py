@@ -17,12 +17,22 @@ warnings.filterwarnings('ignore')
 class Predictor:
 
     def __init__(self, input_file_path, output_file_path="output"):
+        '''
+        Initialize variables
+        :param input_file_path: path to input sequence/s
+        :param output_file_path: path to output files for GEIs
+        '''
         self.input_file_path = input_file_path
         self.output_file_path = output_file_path
         self.parameters = Parameters()
         self.out_of_distribution = []
 
     def __format_input(self, input):
+        '''
+        Parse the input sequences
+        :param input: path to input sequence/s
+        :return: sequences : list of parsed fasta files
+        '''
         sequences = list(SeqIO.parse(input, "fasta"))
         return sequences
 
@@ -35,6 +45,11 @@ class Predictor:
         self.parameters.set_upper_threshold(upper_threshold)
 
     def __process_output(self, output):
+        '''
+        Prcoesses GEI output as a dictionary
+        :param output: list of GEI output for each sequence
+        :return: GEI output as a dictionary
+        '''
         current_directory = os.getcwd()
         final_directory = os.path.join(current_directory, self.output_file_path)
         if not os.path.exists(final_directory):
@@ -55,12 +70,14 @@ class Predictor:
 
 
     def __get_models(self):
+        '''
+        Get embedding and SVM models
+        :return: embedding and SVM models
+        '''
         read_classifier = resources.read_binary(models, "svm_embedding_v4")
-        # read_classifier = resources.read_binary(models, "svm_embedding_v3_short_vector")
         classifier = pickle.loads(read_classifier)
 
         source = files(models).joinpath('embedding_v4')
-        # source = files(models).joinpath('embedding_v3')
         dna_emb_model = Doc2Vec.load(get_tmpfile(source))
 
         return dna_emb_model, classifier
@@ -87,6 +104,10 @@ class Predictor:
 
 
     def predictions_to_excel(self, predictions):
+        '''
+        Outputs prediciton as an excel file
+        :param predictions: GEI prediction dictionary
+        '''
         count = 0
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
@@ -99,6 +120,10 @@ class Predictor:
 
 
     def predictions_to_csv(self, predictions):
+        '''
+        Outputs prediciton as an csv file
+        :param predictions: GEI prediction dictionary
+        '''
         count = 0
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])
@@ -111,6 +136,10 @@ class Predictor:
 
 
     def predictions_to_text(self, predictions):
+        '''
+        Outputs prediciton as an text file
+        :param predictions: GEI prediction dictionary
+        '''
         count = 0
         for org in predictions.keys():
             df = pd.DataFrame(predictions[org], columns=['accession', 'start', 'end', 'probability'])

@@ -293,6 +293,11 @@ class IdentifyGI:
         return gi_borders
 
     def filter_gi(self, gi_borders):
+        '''
+        Filter out the GIs with lesser than upper threshold value
+        :param gi_borders: dictionary with border predictions for dna_sequence
+        :return: filtered_gis : dictionary with border predictions for dna_sequence without the ones lesser than upper threshold
+        '''
         filtered_gis = {}
         count = 1
         for gi_border in gi_borders.keys():
