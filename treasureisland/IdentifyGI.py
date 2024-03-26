@@ -25,12 +25,11 @@ class IdentifyGI:
         dna_vectors = []
         for segments in processed_dna_seq:
             inferred_vector = self.dna_emb_model.infer_vector(segments, epochs=20)
+            sims = self.dna_emb_model.dv.most_similar(inferred_vector)
             if self.out_of_distribution:
-                sims = self.dna_emb_model.dv.most_similar(inferred_vector)
                 most_sim_tag = sims[0][0]
                 inferred_vector = self.dna_emb_model[most_sim_tag]
             dna_vectors.append(inferred_vector)
-
 
         return dna_vectors
 
@@ -47,23 +46,25 @@ class IdentifyGI:
         gei_class_column = list(prob_df['1'])
         count_of_seg = len(gei_class_column)
         gei_segments = [x for x in gei_class_column if x > self.parameters.LOWER_THRESHOLD]
-        distribution_threshold = 0.85
-        pos_ratio = len(gei_segments)/count_of_seg
-        if pos_ratio > distribution_threshold:
-            self.out_of_distribution = True
-            dna_vectors = self.get_dna_vectors(processed_dna_seq)
-            probability = self.classifier.predict_proba(dna_vectors)
-            prob_df = pd.DataFrame(np.column_stack([segment_borders, probability]), columns=['start', 'end', '0', '1'])
-            gei_class_column = list(prob_df['1'])
-            count_of_seg = len(gei_class_column)
-            gei_segments = [x for x in gei_class_column if x > self.parameters.LOWER_THRESHOLD]
+        distribution_threshold = 0.9
+        if count_of_seg > 6:
             pos_ratio = len(gei_segments)/count_of_seg
-            self.out_of_distribution = False
             if pos_ratio > distribution_threshold:
                 self.out_of_distribution = True
-                print("data out of distribution for this prediction")
-        else:
-            self.out_of_distribution = False
+                dna_vectors = self.get_dna_vectors(processed_dna_seq)
+                probability = self.classifier.predict_proba(dna_vectors)
+                prob_df = pd.DataFrame(np.column_stack([segment_borders, probability]), columns=['start', 'end', '0', '1'])
+                gei_class_column = list(prob_df['1'])
+                count_of_seg = len(gei_class_column)
+                gei_segments = [x for x in gei_class_column if x > self.parameters.LOWER_THRESHOLD]
+                pos_ratio = len(gei_segments)/count_of_seg
+                distribution_threshold = 0.7
+                self.out_of_distribution = False
+                if pos_ratio > distribution_threshold:
+                    self.out_of_distribution = True
+                    print("data out of distribution for this prediction")
+            else:
+                self.out_of_distribution = False
         prob_list = prob_df.values.tolist()
 
         return prob_list
@@ -291,6 +292,17 @@ class IdentifyGI:
 
         return gi_borders
 
+    def filter_gi(self, gi_borders):
+        filtered_gis = {}
+        count = 1
+        for gi_border in gi_borders.keys():
+            gi = gi_borders[gi_border]
+            prob = gi[3]
+            if prob >= self.parameters.UPPER_THRESHOLD:
+                filtered_gis[count] = gi
+                count += 1
+        return filtered_gis
+
     def find_gi_predictions(self):
         '''
         Main function to call all other functions for identifying GI regions
@@ -311,10 +323,14 @@ class IdentifyGI:
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
             dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders, processed_dna_seq)
+            all_out_of_distribution.append(self.out_of_distribution)
+            if self.out_of_distribution:
+                all_gi_borders.append({'0': [seq_id, -1, 0, 0]})
+                continue
             gi_regions = self.get_GI_regions(dna_prob)
             gi_borders = self.find_GI_borders(gi_regions, seq_id, dna_sequence)
-            all_gi_borders.append(gi_borders)
-            all_out_of_distribution.append(self.out_of_distribution)
+            filtered_gi_borders = self.filter_gi(gi_borders)
+            all_gi_borders.append(filtered_gi_borders)
 
         return all_gi_borders, all_out_of_distribution
 

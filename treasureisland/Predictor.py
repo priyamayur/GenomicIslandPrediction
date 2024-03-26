@@ -11,6 +11,8 @@ from importlib import resources
 from gensim.test.utils import get_tmpfile
 import time
 from treasureisland.Parameters import Parameters
+import warnings
+warnings.filterwarnings('ignore')
 
 class Predictor:
 
@@ -53,10 +55,12 @@ class Predictor:
 
 
     def __get_models(self):
-        read_classifier = resources.read_binary(models, "svm_embedding_v3_short_vector")
+        read_classifier = resources.read_binary(models, "svm_embedding_v4")
+        # read_classifier = resources.read_binary(models, "svm_embedding_v3_short_vector")
         classifier = pickle.loads(read_classifier)
 
-        source = files(models).joinpath('embedding_v3')
+        source = files(models).joinpath('embedding_v4')
+        # source = files(models).joinpath('embedding_v3')
         dna_emb_model = Doc2Vec.load(get_tmpfile(source))
 
         return dna_emb_model, classifier
