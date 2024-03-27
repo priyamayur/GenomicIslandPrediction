@@ -1,3 +1,6 @@
+from tqdm import tqdm
+
+
 class PreprocessData:
 
     def __init__(self,parameters):
@@ -24,8 +27,8 @@ class PreprocessData:
         sequence = str(dna_sequence.seq).lower()
         processed_dna_seq = []
         segment_borders = []
-
-        for i in range(0, len(sequence), self.parameters.WINDOW_SIZE):
+        dna_sequence_tqdm = tqdm(range(0, len(sequence), self.parameters.WINDOW_SIZE), position=0, leave=True)
+        for i in dna_sequence_tqdm:
             start = i
             if (i + self.parameters.WINDOW_SIZE) < len(sequence):
                 end = i + self.parameters.WINDOW_SIZE

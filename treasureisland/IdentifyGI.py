@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from copy import copy
 from Bio.Seq import Seq
+from tqdm import tqdm
 from treasureisland.PreprocessData import PreprocessData
 
 
@@ -23,7 +24,7 @@ class IdentifyGI:
         '''
 
         dna_vectors = []
-        for segments in processed_dna_seq:
+        for segments in tqdm((processed_dna_seq), position=0, leave=True):
             inferred_vector = self.dna_emb_model.infer_vector(segments, epochs=20)
             sims = self.dna_emb_model.dv.most_similar(inferred_vector)
             if self.out_of_distribution:
@@ -80,7 +81,7 @@ class IdentifyGI:
         gi_dict = {}
         gi_num = 1
         prev_gi = False
-        for row in dna_prob:
+        for row in tqdm(dna_prob, position=0, leave=True):
             found_gi = False
             if row[3] >= self.parameters.UPPER_THRESHOLD:
                 found_gi = True
@@ -285,7 +286,7 @@ class IdentifyGI:
 
         gi_borders = {}
         mergedGEIS = self.merge(gi_regions, dna_sequence)
-        for mergedGEI in mergedGEIS:
+        for mergedGEI in tqdm(mergedGEIS, position=0, leave=True):
             preFineTuned = self.pre_fine_tune(mergedGEI)
             fineTuned = self.fine_tune(preFineTuned, dna_sequence)
             gi_borders[fineTuned.name] = [id, fineTuned.start, fineTuned.end, fineTuned.prob]
@@ -317,22 +318,25 @@ class IdentifyGI:
         all_gi_borders = []
         all_out_of_distribution = []
         org_count = 0
-        for dna_sequence in self.dna_sequence_list:
+        dna_sequence_list_tqdm = tqdm(self.dna_sequence_list, position=0, leave=True)
+        for dna_sequence in dna_sequence_list_tqdm:
             org_count += 1
-            print("--- sequence " + str(org_count) + "---")
-            #seq_id = ''.join(e for e in str(dna_sequence.id) if e.isalnum())
+            print("\n-------- sequence " + str(org_count) + "-------- \n")
             seq_id = dna_sequence.id
-            print(seq_id)
-            print("approximate prediction time : 2-5 minutes")
+            dna_sequence_list_tqdm.set_description("Processing %s" % seq_id)
             pre_process = PreprocessData(self.parameters)
+            print("\n Preprocessing DNA segment \n")
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)
+            print("\n Get DNA vectors \n")
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
+            print("\n Get DNA segment probability  \n")
             dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders, processed_dna_seq)
             all_out_of_distribution.append(self.out_of_distribution)
             if self.out_of_distribution:
                 all_gi_borders.append({'0': [seq_id, -1, 0, 0]})
                 continue
             gi_regions = self.get_GI_regions(dna_prob)
+            print("\n Fine tune GEI borders  \n")
             gi_borders = self.find_GI_borders(gi_regions, seq_id, dna_sequence)
             filtered_gi_borders = self.filter_gi(gi_borders)
             all_gi_borders.append(filtered_gi_borders)
