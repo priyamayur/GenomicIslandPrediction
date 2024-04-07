@@ -19,6 +19,16 @@ class PreprocessData:
 
         return kmers
 
+    def get_complete_sequence_kmers(self, dna_sequence):
+        '''
+        Generates kmers for the entire sequence
+        :param dna_sequence: DNA sequence
+        :return: kmers of the entire DNA sequence
+        '''
+        sequence = str(dna_sequence.seq).lower()
+        kmers = [self.generate_kmers(sequence)]
+        return kmers
+
     def split_dna_sequence(self, dna_sequence):
         '''
         Divides the DNA segment into equal small segments of sizes self.window_size

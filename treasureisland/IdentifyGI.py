@@ -17,6 +17,19 @@ class IdentifyGI:
         self.parameters = parameters
         self.out_of_distribution = False
 
+    def dna_similarity_check(self,processed_dna_seq):
+        '''
+        Checks similarity of input DNA to training samples
+        :param processed_dna_seq: DNA segment
+        '''
+        for segments in tqdm((processed_dna_seq), position=0, leave=True):
+            inferred_vector = self.dna_emb_model.infer_vector(segments, epochs=20)
+            sims = self.dna_emb_model.dv.most_similar(inferred_vector)
+            most_sim_vector_distance = float(sims[0][1])
+            if most_sim_vector_distance < 0.7:
+                print("Sequence is not similar to the model training samples")
+
+
     def get_dna_vectors(self, processed_dna_seq):
         '''Uses the DNA embedding model to get the DNA vector of a DNA segment
            :param processed_dna_seq : DNA segment after preprocessing step
@@ -47,7 +60,7 @@ class IdentifyGI:
         gei_class_column = list(prob_df['1'])
         count_of_seg = len(gei_class_column)
         gei_segments = [x for x in gei_class_column if x > self.parameters.LOWER_THRESHOLD]
-        distribution_threshold = 0.9
+        distribution_threshold = 0.8
         if count_of_seg > 6:
             pos_ratio = len(gei_segments)/count_of_seg
             if pos_ratio > distribution_threshold:
@@ -63,7 +76,7 @@ class IdentifyGI:
                 self.out_of_distribution = False
                 if pos_ratio > distribution_threshold:
                     self.out_of_distribution = True
-                    print("data out of distribution for this prediction")
+                    print("cannot confidently predict genomic islands for this sequence")
             else:
                 self.out_of_distribution = False
         prob_list = prob_df.values.tolist()
@@ -325,10 +338,16 @@ class IdentifyGI:
             seq_id = dna_sequence.id
             dna_sequence_list_tqdm.set_description("Processing %s" % seq_id)
             pre_process = PreprocessData(self.parameters)
+
+            sequence_kmers = pre_process.get_complete_sequence_kmers(dna_sequence)
+            self.dna_similarity_check(sequence_kmers)
+
             print("\n Preprocessing DNA segment \n")
             processed_dna_seq, segment_borders = pre_process.split_dna_sequence(dna_sequence)
+
             print("\n Get DNA vectors \n")
             dna_vectors = self.get_dna_vectors(processed_dna_seq)
+
             print("\n Get DNA segment probability  \n")
             dna_prob = self.get_dna_segment_probability(dna_vectors, segment_borders, processed_dna_seq)
             all_out_of_distribution.append(self.out_of_distribution)
@@ -336,6 +355,7 @@ class IdentifyGI:
                 all_gi_borders.append({'0': [seq_id, -1, 0, 0]})
                 continue
             gi_regions = self.get_GI_regions(dna_prob)
+
             print("\n Fine tune GEI borders  \n")
             gi_borders = self.find_GI_borders(gi_regions, seq_id, dna_sequence)
             filtered_gi_borders = self.filter_gi(gi_borders)
