@@ -1,8 +1,10 @@
 # TreasureIsland
 
-TreasureIsland python package is a machine learning-based Genomic Island prediction software, that uses an unsupervised representation of DNA for its prediction.
+TreasureIsland  is a machine learning-based Genomic Island prediction software, that uses an unsupervised representation of DNA for its prediction.
 
 TreasureIsland is constructed from the [Benbow dataset](https://github.com/priyamayur/GenomicIslandPrediction/tree/master/Benbow). 
+
+A manuscript is [available](https://www.biorxiv.org/content/10.1101/2022.08.25.505341v1)
 
 ## Dependencies :
 
